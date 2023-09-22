@@ -20,6 +20,8 @@ add_subdirectory(deps/rlImGui)
 
 add_subdirectory(deps/tinyxml2)
 
+add_subdirectory(deps/nativefiledialog-extended)
+
 # set(link_src "${CMAKE_SOURCE_DIR}/assets")
 # if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 # 	set(link_dst "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG}/<assets") 
@@ -61,5 +63,5 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE src/editor src/swz deps/raylib/src deps/imgui deps/rlImGui deps/tinyxml2 src/util)
-target_link_libraries(bh-mapeditor PRIVATE z raylib imgui rlImGui -static)
+target_link_libraries(bh-mapeditor PRIVATE z raylib imgui rlImGui nfd -static)
 target_compile_options(bh-mapeditor PRIVATE -Wall -Wextra)

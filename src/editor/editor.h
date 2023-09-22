@@ -9,7 +9,9 @@ class Editor {
     ~Editor();
 
   private:
-    void findBrawlhallaDir();
+    void findBrawlDir();
+    bool isValidBrawlDir(const std::filesystem::path& dir);
+    std::string brawlDir;
 
     std::unique_ptr<Map> map;
     Camera2D cam;

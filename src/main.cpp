@@ -1,13 +1,14 @@
 #include "editor.h"
 #include "logger.h"
 #include "raylib.h"
+#include <memory>
 
 int main() {
     SetTraceLogCallback(Logger::rlLog);
 
-    Editor editor;
-    editor.start();
-    editor.run();
+    std::unique_ptr<Editor> editor = std::make_unique<Editor>();
+    editor->start();
+    editor->run();
 
     // uint32_t key = 887927120;
 

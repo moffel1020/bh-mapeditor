@@ -47,7 +47,7 @@ void Map::setBackground(std::string path) {
     background = LoadTexture(path.c_str());
 }
 
-void Map::draw(const Camera2D &cam) {
+void Map::draw(const Camera2D& cam) {
     DrawTexturePro(background, Rectangle{0, 0, (float)background.width, (float)background.height},
                    Rectangle{0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
                    Vector2(0, 0), 0, WHITE);
@@ -86,6 +86,8 @@ void Map::draw(const Camera2D &cam) {
 
         DrawCircle(respawn.x, respawn.y, 50, col);
     }
+
+    DrawCircle(0, 0, 50, WHITE);
 
     EndMode2D();
 }

@@ -31,6 +31,7 @@ enum class CollisionType {
     HARD,
     SOFT,
     DYNAMIC,
+    NOSLIDE
 };
 
 struct Collision {
@@ -63,9 +64,10 @@ class Map {
   public:
     Map();
     void setBackground(std::string path);
-    void draw(const Camera2D &cam);
+    void draw(const Camera2D& cam);
 
   private:
+    std::string name = "Custom map";
     Texture background;
     CameraBounds camBounds;
     KillBounds killBounds;
