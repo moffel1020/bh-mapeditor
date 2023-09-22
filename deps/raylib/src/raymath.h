@@ -49,6 +49,12 @@
 *
 **********************************************************************************************/
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push // These throw a warnings on visual studio, need to check if __GNUC__ is
+                            // defined to use it.
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
+
 #ifndef RAYMATH_H
 #define RAYMATH_H
 
@@ -2166,3 +2172,7 @@ RMAPI int QuaternionEquals(Quaternion p, Quaternion q)
 }
 
 #endif  // RAYMATH_H
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
