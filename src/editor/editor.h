@@ -9,6 +9,7 @@ class Editor {
     ~Editor();
 
   private:
+    void gui();
     void findBrawlDir();
     bool isValidBrawlDir(const std::filesystem::path& dir);
     std::string brawlDir;

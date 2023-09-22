@@ -34,6 +34,8 @@ enum class CollisionType {
     NOSLIDE
 };
 
+std::string collisionTypeToString(CollisionType type);
+
 struct Collision {
     CollisionType type;
     float x1;
@@ -51,13 +53,7 @@ struct Respawn {
 struct ItemSpawn {
     float x;
     float y;
-    float w; // idk what w and h are for
-    float h;
-};
-
-struct InitItemSpawn {
-    float x;
-    float y;
+    bool init;
 };
 
 class Map {
@@ -66,12 +62,10 @@ class Map {
     void setBackground(std::string path);
     void draw(const Camera2D& cam);
 
-  private:
     std::string name = "Custom map";
     Texture background;
     CameraBounds camBounds;
     KillBounds killBounds;
-    InitItemSpawn initItemSpawn;
     std::vector<ItemSpawn> itemSpawns;
     std::vector<Respawn> respawns;
     std::vector<Platform> platforms;

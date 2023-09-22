@@ -1,10 +1,30 @@
 #include "map.h"
-
-#include <cmath>
-
 #include "logger.h"
 #include "raylib.h"
 #include "rlgl.h"
+
+std::string collisionTypeToString(CollisionType type) {
+    std::string str;
+    switch (type) {
+    case CollisionType::HARD:
+        str = "hard";
+        break;
+    case CollisionType::SOFT:
+        str = "soft";
+        break;
+    case CollisionType::DYNAMIC:
+        str = "dynamic";
+        break;
+    case CollisionType::NOSLIDE:
+        str = "no slide";
+        break;
+    default:
+        str = "unknown";
+        break;
+    }
+
+    return str;
+}
 
 Map::Map() {
     // placeholder test map
@@ -32,11 +52,11 @@ Map::Map() {
         1091.5f, 1747, 930.77f, 938.45f);
     collisions.emplace_back(CollisionType::HARD, 200, 1850, 2000, 1850);
     collisions.emplace_back(CollisionType::HARD, 200, 2450, 200, 1850);
-    initItemSpawn = InitItemSpawn{1086.45f, 1353.95f};
-    itemSpawns.emplace_back(698.65f, 1570, 384.95f);
-    itemSpawns.emplace_back(1117.6f, 1570, 384.95f);
-    itemSpawns.emplace_back(346.35f, 1200, 256.1f);
-    respawns.emplace_back(480, 1200, true);
+    itemSpawns.emplace_back(1086.45f, 1353.95f, true);
+    itemSpawns.emplace_back(698.65f, 1570, false);
+    itemSpawns.emplace_back(1117.6f, 1570, false);
+    itemSpawns.emplace_back(346.35f, 1200, false);
+    respawns.emplace_back(480, 1200, false);
     respawns.emplace_back(350, 1550, true);
     respawns.emplace_back(1850, 1550, true);
     respawns.emplace_back(1740, 1200, true);
@@ -72,10 +92,12 @@ void Map::draw(const Camera2D& cam) {
                          camBounds.h + killBounds.top + killBounds.bottom};
     DrawRectangleLinesEx(kbounds, 15, Color{255, 161, 0, 150});
 
-    DrawCircle(initItemSpawn.x, initItemSpawn.y, 50, Color{0, 121, 241, 150});
-
     for (auto item : itemSpawns) {
-        DrawCircle(item.x, item.y, 50, Color{102, 191, 255, 150});
+        Color col{102, 191, 255, 150};
+        if (item.init) {
+            col = {0, 121, 241, 150};
+        }
+        DrawCircle(item.x, item.y, 50, col);
     }
 
     for (auto respawn : respawns) {
@@ -83,7 +105,6 @@ void Map::draw(const Camera2D& cam) {
         if (respawn.init) {
             col = {255, 161, 0, 150};
         }
-
         DrawCircle(respawn.x, respawn.y, 50, col);
     }
 
