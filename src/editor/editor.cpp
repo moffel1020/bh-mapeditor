@@ -3,6 +3,7 @@
 #include "imgui_stdlib.h"
 #include "logger.h"
 #include "map.h"
+#include "mapdata.h"
 #include "nfd.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -13,6 +14,7 @@
 #include <iostream>
 #include <math.h>
 #include <memory>
+#include <string>
 #include <vector>
 
 void Editor::start() {
@@ -67,6 +69,8 @@ void Editor::run() {
 }
 
 void Editor::gui() {
+    // this is kinda shit but whatever
+
     rlImGuiBegin();
 
     static bool showObjects = true;
@@ -96,6 +100,11 @@ void Editor::gui() {
         ImGui::Begin("Map Info", &showMapInfo);
         ImGui::InputTextWithHint("Map name", "Enter name", &map->name,
                                  ImGuiInputTextFlags_CharsNoBlank);
+        if (ImGui::Button(map->background.getFilename().c_str())) {
+            map->background.setImage(selectImageFile());
+        }
+        ImGui::SameLine();
+        ImGui::Text("Background");
         ImGui::SeparatorText("Weapon spawn color");
         ImGui::ColorEdit3("inner", map->weaponColor.inner, ImGuiColorEditFlags_NoInputs);
         ImGui::ColorEdit3("outer", map->weaponColor.outer, ImGuiColorEditFlags_NoInputs);
@@ -128,7 +137,11 @@ void Editor::gui() {
         if (ImGui::CollapsingHeader("Platforms")) {
             for (size_t i = 0; i < map->platforms.size(); i++) {
                 if (ImGui::TreeNode((void*)&map->platforms[i], "platform %d", (int)i)) {
-                    // TODO: show texture filename here
+                    if (ImGui::Button(map->platforms[i].img.getFilename().c_str())) {
+                        map->platforms[i].img.setImage(selectImageFile());
+                    }
+                    ImGui::SameLine();
+                    ImGui::Text("Image");
                     ImGui::DragFloat("x", &map->platforms[i].x, 5.0f);
                     ImGui::DragFloat("y", &map->platforms[i].y, 5.0f);
                     ImGui::DragFloat("w", &map->platforms[i].w, 5.0f, 1.0f, FLT_MAX, "%f",
@@ -143,7 +156,7 @@ void Editor::gui() {
         if (ImGui::CollapsingHeader("Collisions")) {
             for (size_t i = 0; i < map->collisions.size(); i++) {
                 if (ImGui::TreeNode((void*)&map->collisions[i], "collision %d", (int)i)) {
-                    const char* colTypes[] = {"Hard", "Soft"};
+                    const char* colTypes[] = {"Hard", "Soft"}; // bad but it works for now
                     ImGui::Combo("type", (int*)(&map->collisions[i].type), colTypes, 2);
                     ImGui::DragFloat("x1", &map->collisions[i].x1, 5.0f);
                     ImGui::DragFloat("y1", &map->collisions[i].y1, 5.0f);
@@ -206,7 +219,7 @@ void Editor::findBrawlDir() {
     NFD::Quit();
 }
 
-bool Editor::isValidBrawlDir(const std::filesystem::path& dir) {
+bool Editor::isValidBrawlDir(const std::filesystem::path& dir) const {
     const std::string requiredFiles[] = {"Dynamic.swz", "BrawlhallaAir.swf"};
     for (auto file : requiredFiles) {
         if (!std::filesystem::exists(dir.string() + "/" + file)) {
@@ -216,4 +229,17 @@ bool Editor::isValidBrawlDir(const std::filesystem::path& dir) {
     }
 
     return true;
+}
+
+std::string Editor::selectImageFile() const {
+    NFD::Init();
+    nfdchar_t* out;
+    auto result = NFD::OpenDialog(out);
+    if (result == NFD_OKAY) {
+        NFD::FreePath(out);
+        return std::string(out);
+    }
+
+    Logger::error("failed selecting image");
+    return std::string("");
 }

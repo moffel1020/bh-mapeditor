@@ -1,32 +1,35 @@
 #include "map.h"
 #include "logger.h"
+#include "mapdata.h"
 #include "raylib.h"
 #include "rlgl.h"
 
 Map::Map() {
     // placeholder test map
-    setBackground("D:"
-                  "\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Backgrou"
-                  "nds\\BG_Steam."
-                  "jpg");
+    background =
+        ImageResource("D:"
+                      "\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Backgrou"
+                      "nds\\BG_Steam."
+                      "jpg");
 
     camBounds = CameraBounds{-1364, 278.15f, 4928, 2772};
     killBounds = KillBounds{700, 700, 800, 850};
 
-    platforms.emplace_back(LoadTexture("D:"
-                                       "\\games\\steamlibrary\\steamapps\\common\\Brawlhall"
-                                       "a\\mapArt\\Enigma\\Platform_"
-                                       "Steam1A."
+    platforms.emplace_back(187, 1747, 930.77f, 938.45f,
+                           ImageResource("D:"
+                                         "\\games\\steamlibrary\\steamapps\\common\\Brawlhall"
+                                         "a\\mapArt\\Enigma\\Platform_"
+                                         "Steam1A."
 
-                                       "png"),
-                           187, 1747, 930.77f, 938.45f);
+                                         "png"));
     platforms.emplace_back(
-        LoadTexture("D:"
-                    "\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Eni"
-                    "gma\\Platform_"
-                    "Steam1B."
-                    "png"),
-        1091.5f, 1747, 930.77f, 938.45f);
+        1091.5f, 1747, 930.77f, 938.45f,
+        ImageResource("D:"
+                      "\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Eni"
+                      "gma\\Platform_"
+                      "Steam1B."
+                      "png"));
+
     collisions.emplace_back(CollisionType::HARD, 200, 1850, 2000, 1850);
     collisions.emplace_back(CollisionType::HARD, 200, 2450, 200, 1850);
     itemSpawns.emplace_back(1086.45f, 1353.95f, true);
@@ -45,20 +48,17 @@ Map::Map() {
     weaponColor.outer[2] = 1;
 }
 
-void Map::setBackground(std::string path) {
-    Logger::info("Loading texture " + path);
-    background = LoadTexture(path.c_str());
-}
-
 void Map::draw(const Camera2D& cam) {
-    DrawTexturePro(background, Rectangle{0, 0, (float)background.width, (float)background.height},
+    DrawTexturePro(background.tex,
+                   Rectangle{0, 0, (float)background.tex.width, (float)background.tex.height},
                    Rectangle{0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
                    Vector2(0, 0), 0, WHITE);
 
     BeginMode2D(cam);
 
     for (auto pf : platforms) {
-        DrawTexturePro(pf.tex, Rectangle{0, 0, (float)pf.tex.width, (float)pf.tex.height},
+        DrawTexturePro(pf.img.tex,
+                       Rectangle{0, 0, (float)pf.img.tex.width, (float)pf.img.tex.height},
                        Rectangle{pf.x, pf.y, pf.w, pf.h}, Vector2(0, 0), 0, WHITE);
     }
 

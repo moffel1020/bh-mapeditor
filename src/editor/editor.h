@@ -11,9 +11,10 @@ class Editor {
   private:
     void gui();
     void findBrawlDir();
-    bool isValidBrawlDir(const std::filesystem::path& dir);
-    std::string brawlDir;
+    std::string selectImageFile() const;
+    bool isValidBrawlDir(const std::filesystem::path& dir) const;
 
+    std::string brawlDir;
     std::unique_ptr<Map> map;
     Camera2D cam;
 };

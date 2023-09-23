@@ -49,16 +49,6 @@ if (APPLE)
 endif()
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
-# set(SOURCES 
-# 	src/main.cpp
-# 	src/editor/editor.cpp
-# 	src/editor/map.cpp
-# 	src/swz/decrypt.cpp
-# 	src/swz/encrypt.cpp
-# 	src/swz/swz.cpp
-# 	src/swz/well512.cpp
-# 	src/util/logger.cpp
-# )
 
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
