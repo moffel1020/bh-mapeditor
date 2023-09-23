@@ -60,6 +60,12 @@ Map::Map() {
     respawns.emplace_back(350, 1550, true);
     respawns.emplace_back(1850, 1550, true);
     respawns.emplace_back(1740, 1200, true);
+    weaponColor.inner[0] = 185.0f / 255;
+    weaponColor.inner[1] = 70.0f / 255;
+    weaponColor.inner[2] = 1.0f;
+    weaponColor.outer[0] = 246.0f / 255;
+    weaponColor.outer[1] = 175.0f / 255;
+    weaponColor.outer[2] = 1;
 }
 
 void Map::setBackground(std::string path) {
@@ -105,10 +111,8 @@ void Map::draw(const Camera2D& cam) {
         if (respawn.init) {
             col = {255, 161, 0, 150};
         }
-        DrawCircle(respawn.x, respawn.y, 50, col);
+        DrawCircle(respawn.x, respawn.y, 80, col);
     }
-
-    DrawCircle(0, 0, 50, WHITE);
 
     EndMode2D();
 }

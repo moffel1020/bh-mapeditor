@@ -1,5 +1,6 @@
 #include "editor.h"
 #include "imgui.h"
+#include "imgui_stdlib.h"
 #include "logger.h"
 #include "map.h"
 #include "nfd.hpp"
@@ -48,7 +49,7 @@ void Editor::run() {
             cam.offset = GetMousePosition();
             cam.target = mouseWorldPos;
 
-            const float zoomIncrement = 0.125f;
+            const float zoomIncrement = 0.075f;
             cam.zoom += (wheel * zoomIncrement);
             if (cam.zoom < zoomIncrement) {
                 cam.zoom = zoomIncrement;
@@ -67,16 +68,18 @@ void Editor::run() {
 void Editor::gui() {
     rlImGuiBegin();
 
-    static bool showDemo = false;
     static bool showObjects = true;
+    static bool showMapInfo = true;
+    static bool showDemo = false;
 
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("View")) {
-            ImGui::MenuItem("Gui Demo", nullptr, &showDemo);
             ImGui::MenuItem("Object viewer", nullptr, &showObjects);
+            ImGui::MenuItem("Map Info", nullptr, &showMapInfo);
+            ImGui::MenuItem("Gui Demo", nullptr, &showDemo);
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -88,21 +91,36 @@ void Editor::gui() {
         ImGui::ShowDemoWindow(&showDemo);
     }
 
-    if (showObjects) {
-        ImGui::Begin("Objects", &showObjects);
+    if (showMapInfo) {
+        ImGui::Begin("Map Info", &showMapInfo);
+        ImGui::InputTextWithHint("Map name", "Enter name", &map->name,
+                                 ImGuiInputTextFlags_CharsNoBlank);
+        ImGui::SeparatorText("Weapon spawn color");
+        ImGui::ColorEdit3("inner", map->weaponColor.inner, ImGuiColorEditFlags_NoInputs);
+        ImGui::ColorEdit3("outer", map->weaponColor.outer, ImGuiColorEditFlags_NoInputs);
+        ImGui::Separator();
         if (ImGui::CollapsingHeader("Camera Bounds")) {
-            ImGui::Text("x: %f", map->camBounds.x);
-            ImGui::Text("y: %f", map->camBounds.y);
-            ImGui::Text("w: %f", map->camBounds.w);
-            ImGui::Text("h: %f", map->camBounds.h);
+            ImGui::DragFloat("x", &map->camBounds.x, 10.0f);
+            ImGui::DragFloat("y", &map->camBounds.y, 10.0f);
+            ImGui::DragFloat("w", &map->camBounds.w, 10.0f);
+            ImGui::DragFloat("h", &map->camBounds.h, 10.0f);
         }
 
         if (ImGui::CollapsingHeader("Kill Bounds")) {
-            ImGui::Text("left: %f", map->killBounds.left);
-            ImGui::Text("right: %f", map->killBounds.right);
-            ImGui::Text("top: %f", map->killBounds.top);
-            ImGui::Text("bottom: %f", map->killBounds.bottom);
+            ImGui::DragInt("left", &map->killBounds.left, 10.0f, 1, 20000, "%d",
+                           ImGuiSliderFlags_AlwaysClamp);
+            ImGui::DragInt("right", &map->killBounds.right, 10.0f, 1, 20000, "%d",
+                           ImGuiSliderFlags_AlwaysClamp);
+            ImGui::DragInt("top", &map->killBounds.top, 10.0f, 1, 20000, "%d",
+                           ImGuiSliderFlags_AlwaysClamp);
+            ImGui::DragInt("bottom", &map->killBounds.bottom, 10.0f, 1, 20000, "%d",
+                           ImGuiSliderFlags_AlwaysClamp);
         }
+        ImGui::End();
+    }
+
+    if (showObjects) {
+        ImGui::Begin("Objects", &showObjects);
 
         if (ImGui::CollapsingHeader("Platforms")) {
             for (size_t i = 0; i < map->platforms.size(); i++) {

@@ -13,10 +13,10 @@ struct CameraBounds {
 
 // relative to camerabounds
 struct KillBounds {
-    float left;
-    float right;
-    float top;
-    float bottom;
+    int left;
+    int right;
+    int top;
+    int bottom;
 };
 
 struct Platform {
@@ -56,13 +56,20 @@ struct ItemSpawn {
     bool init;
 };
 
+struct WeaponColor {
+    // rgb, 0 to 1
+    float inner[3];
+    float outer[3];
+};
+
 class Map {
   public:
     Map();
     void setBackground(std::string path);
     void draw(const Camera2D& cam);
 
-    std::string name = "Custom map";
+    std::string name = "CustomMap";
+    WeaponColor weaponColor;
     Texture background;
     CameraBounds camBounds;
     KillBounds killBounds;
