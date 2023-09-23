@@ -34,8 +34,6 @@ enum class CollisionType {
     NOSLIDE
 };
 
-std::string collisionTypeToString(CollisionType type);
-
 struct Collision {
     CollisionType type;
     float x1;

@@ -3,29 +3,6 @@
 #include "raylib.h"
 #include "rlgl.h"
 
-std::string collisionTypeToString(CollisionType type) {
-    std::string str;
-    switch (type) {
-    case CollisionType::HARD:
-        str = "hard";
-        break;
-    case CollisionType::SOFT:
-        str = "soft";
-        break;
-    case CollisionType::DYNAMIC:
-        str = "dynamic";
-        break;
-    case CollisionType::NOSLIDE:
-        str = "no slide";
-        break;
-    default:
-        str = "unknown";
-        break;
-    }
-
-    return str;
-}
-
 Map::Map() {
     // placeholder test map
     setBackground("D:"
@@ -85,33 +62,44 @@ void Map::draw(const Camera2D& cam) {
                        Rectangle{pf.x, pf.y, pf.w, pf.h}, Vector2(0, 0), 0, WHITE);
     }
 
-    rlSetLineWidth(10 * cam.zoom);
-    for (auto col : collisions) {
-        DrawLine(col.x1, col.y1, col.x2, col.y2, RED);
+    int opacity = 150;
+    rlSetLineWidth(15 * cam.zoom);
+    for (auto collision : collisions) {
+        auto col = ORANGE;
+        col.a = opacity;
+        if (collision.type == CollisionType::HARD) {
+            col = RED;
+            col.a = opacity;
+        }
+        DrawLine(collision.x1, collision.y1, collision.x2, collision.y2, col);
     }
 
     Rectangle cbounds = {camBounds.x, camBounds.y, camBounds.w, camBounds.h};
-    DrawRectangleLinesEx(cbounds, 15, Color{0, 0, 0, 150});
+    DrawRectangleLinesEx(cbounds, 15, DARKGRAY);
 
     Rectangle kbounds = {camBounds.x - killBounds.left, camBounds.y - killBounds.top,
                          camBounds.w + killBounds.left + killBounds.right,
                          camBounds.h + killBounds.top + killBounds.bottom};
-    DrawRectangleLinesEx(kbounds, 15, Color{255, 161, 0, 150});
+    DrawRectangleLinesEx(kbounds, 15, LIGHTGRAY);
 
     for (auto item : itemSpawns) {
-        Color col{102, 191, 255, 150};
+        auto col = BLUE;
+        col.a = opacity;
         if (item.init) {
-            col = {0, 121, 241, 150};
+            col = DARKBLUE;
+            col.a = opacity;
         }
         DrawCircle(item.x, item.y, 50, col);
     }
 
     for (auto respawn : respawns) {
-        Color col{253, 249, 9, 159};
+        auto col = GREEN;
+        col.a = opacity;
         if (respawn.init) {
-            col = {255, 161, 0, 150};
+            col = LIME;
+            col.a = opacity;
         }
-        DrawCircle(respawn.x, respawn.y, 80, col);
+        DrawCircle(respawn.x, respawn.y, 70, col);
     }
 
     EndMode2D();

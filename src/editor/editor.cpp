@@ -8,6 +8,7 @@
 #include "raymath.h"
 #include "rlImGui.h"
 #include "rlgl.h"
+#include <climits>
 #include <filesystem>
 #include <iostream>
 #include <math.h>
@@ -102,18 +103,20 @@ void Editor::gui() {
         if (ImGui::CollapsingHeader("Camera Bounds")) {
             ImGui::DragFloat("x", &map->camBounds.x, 10.0f);
             ImGui::DragFloat("y", &map->camBounds.y, 10.0f);
-            ImGui::DragFloat("w", &map->camBounds.w, 10.0f);
-            ImGui::DragFloat("h", &map->camBounds.h, 10.0f);
+            ImGui::DragFloat("w", &map->camBounds.w, 10.0f, 1.0f, FLT_MAX, "%f",
+                             ImGuiSliderFlags_AlwaysClamp);
+            ImGui::DragFloat("h", &map->camBounds.h, 10.0f, 1.0f, FLT_MAX, "%f",
+                             ImGuiSliderFlags_AlwaysClamp);
         }
 
         if (ImGui::CollapsingHeader("Kill Bounds")) {
-            ImGui::DragInt("left", &map->killBounds.left, 10.0f, 1, 20000, "%d",
+            ImGui::DragInt("left", &map->killBounds.left, 10.0f, 1, INT_MAX, "%d",
                            ImGuiSliderFlags_AlwaysClamp);
-            ImGui::DragInt("right", &map->killBounds.right, 10.0f, 1, 20000, "%d",
+            ImGui::DragInt("right", &map->killBounds.right, 10.0f, 1, INT_MAX, "%d",
                            ImGuiSliderFlags_AlwaysClamp);
-            ImGui::DragInt("top", &map->killBounds.top, 10.0f, 1, 20000, "%d",
+            ImGui::DragInt("top", &map->killBounds.top, 10.0f, 1, INT_MAX, "%d",
                            ImGuiSliderFlags_AlwaysClamp);
-            ImGui::DragInt("bottom", &map->killBounds.bottom, 10.0f, 1, 20000, "%d",
+            ImGui::DragInt("bottom", &map->killBounds.bottom, 10.0f, 1, INT_MAX, "%d",
                            ImGuiSliderFlags_AlwaysClamp);
         }
         ImGui::End();
@@ -126,10 +129,12 @@ void Editor::gui() {
             for (size_t i = 0; i < map->platforms.size(); i++) {
                 if (ImGui::TreeNode((void*)&map->platforms[i], "platform %d", (int)i)) {
                     // TODO: show texture filename here
-                    ImGui::Text("x: %f", map->platforms[i].x);
-                    ImGui::Text("y: %f", map->platforms[i].y);
-                    ImGui::Text("w: %f", map->platforms[i].w);
-                    ImGui::Text("h: %f", map->platforms[i].h);
+                    ImGui::DragFloat("x", &map->platforms[i].x, 5.0f);
+                    ImGui::DragFloat("y", &map->platforms[i].y, 5.0f);
+                    ImGui::DragFloat("w", &map->platforms[i].w, 5.0f, 1.0f, FLT_MAX, "%f",
+                                     ImGuiSliderFlags_AlwaysClamp);
+                    ImGui::DragFloat("h", &map->platforms[i].h, 5.0f, 1.0f, FLT_MAX, "%f",
+                                     ImGuiSliderFlags_AlwaysClamp);
                     ImGui::TreePop();
                 }
             }
@@ -138,12 +143,12 @@ void Editor::gui() {
         if (ImGui::CollapsingHeader("Collisions")) {
             for (size_t i = 0; i < map->collisions.size(); i++) {
                 if (ImGui::TreeNode((void*)&map->collisions[i], "collision %d", (int)i)) {
-                    std::string type = collisionTypeToString(map->collisions[i].type);
-                    ImGui::Text("type: %s", type.c_str());
-                    ImGui::Text("x1: %f", map->collisions[i].x1);
-                    ImGui::Text("y1: %f", map->collisions[i].y1);
-                    ImGui::Text("x2: %f", map->collisions[i].x2);
-                    ImGui::Text("y2: %f", map->collisions[i].y2);
+                    const char* colTypes[] = {"Hard", "Soft"};
+                    ImGui::Combo("type", (int*)(&map->collisions[i].type), colTypes, 2);
+                    ImGui::DragFloat("x1", &map->collisions[i].x1, 5.0f);
+                    ImGui::DragFloat("y1", &map->collisions[i].y1, 5.0f);
+                    ImGui::DragFloat("x2", &map->collisions[i].x2, 5.0f);
+                    ImGui::DragFloat("y2", &map->collisions[i].y2, 5.0f);
                     ImGui::TreePop();
                 }
             }
@@ -152,9 +157,9 @@ void Editor::gui() {
         if (ImGui::CollapsingHeader("Item Spawns")) {
             for (size_t i = 0; i < map->itemSpawns.size(); i++) {
                 if (ImGui::TreeNode((void*)&map->itemSpawns[i], "item %d", (int)i)) {
-                    ImGui::Text("Initial: %s", map->itemSpawns[i].init ? "true" : "false");
-                    ImGui::Text("x: %f", map->itemSpawns[i].x);
-                    ImGui::Text("y: %f", map->itemSpawns[i].y);
+                    ImGui::Checkbox("Initial", &map->itemSpawns[i].init);
+                    ImGui::DragFloat("x", &map->itemSpawns[i].x, 5.0f);
+                    ImGui::DragFloat("y", &map->itemSpawns[i].y, 5.0f);
                     ImGui::TreePop();
                 }
             }
@@ -163,9 +168,9 @@ void Editor::gui() {
         if (ImGui::CollapsingHeader("Respawns")) {
             for (size_t i = 0; i < map->respawns.size(); i++) {
                 if (ImGui::TreeNode((void*)&map->respawns[i], "respawn %d", (int)i)) {
-                    ImGui::Text("Initial: %s", map->respawns[i].init ? "true" : "false");
-                    ImGui::Text("x: %f", map->respawns[i].x);
-                    ImGui::Text("y: %f", map->respawns[i].y);
+                    ImGui::Checkbox("Initial", &map->respawns[i].init);
+                    ImGui::DragFloat("x", &map->respawns[i].x, 5.0f);
+                    ImGui::DragFloat("y", &map->respawns[i].y, 5.0f);
                     ImGui::TreePop();
                 }
             }
