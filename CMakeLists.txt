@@ -52,6 +52,6 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE src/editor src/swz deps/raylib/src deps/imgui deps/imgui/misc/cpp deps/rlImGui deps/tinyxml2 src/util)
+target_include_directories(${PROJECT_NAME} PRIVATE src/editor src/swz deps/raylib/src deps/imgui deps/imgui/misc/cpp deps/rlImGui deps/tinyxml2 src/util src/editor/ui)
 target_link_libraries(bh-mapeditor PRIVATE z raylib imgui rlImGui nfd -static)
 target_compile_options(bh-mapeditor PRIVATE -Wall -Wextra)

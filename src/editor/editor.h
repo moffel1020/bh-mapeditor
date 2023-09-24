@@ -11,7 +11,6 @@ class Editor {
   private:
     void gui();
     void findBrawlDir();
-    std::string selectImageFile() const;
     bool isValidBrawlDir(const std::filesystem::path& dir) const;
 
     std::string brawlDir;
