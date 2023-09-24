@@ -26,7 +26,7 @@ CMakeFiles
 cmake_install.cmake
 install_manifest.txt
 *.cmake
-!deps/raylib/cmake/*.cmake
+!deps/raylib/cmake/*
 !glmConfig.cmake
 !glmConfig-version.cmake
 
@@ -50,10 +50,12 @@ Makefile
 *.log
 
 # local build(s)
-build*
+build/*
 
 /.vs
 /.vscode
 /CMakeSettings.json
 .DS_Store
 *.swp
+
+!deps/raylib/build.zig
