@@ -105,6 +105,7 @@ void Editor::gui() {
         }
         ImGui::SameLine();
         ImGui::Text("Background");
+        ImGui::Image(&map->background.tex.id, ImVec2(90 * map->background.ratio, 90));
         ImGui::SeparatorText("Weapon spawn color");
         ImGui::ColorEdit3("inner", map->weaponColor.inner, ImGuiColorEditFlags_NoInputs);
         ImGui::ColorEdit3("outer", map->weaponColor.outer, ImGuiColorEditFlags_NoInputs);
@@ -142,6 +143,8 @@ void Editor::gui() {
                     }
                     ImGui::SameLine();
                     ImGui::Text("Image");
+                    ImGui::Image(&map->platforms[i].img.tex.id,
+                                 ImVec2(60 * map->platforms[i].img.ratio, 60));
                     ImGui::DragFloat("x", &map->platforms[i].x, 5.0f);
                     ImGui::DragFloat("y", &map->platforms[i].y, 5.0f);
                     ImGui::DragFloat("w", &map->platforms[i].w, 5.0f, 1.0f, FLT_MAX, "%f",
