@@ -20,4 +20,7 @@ class Map {
     std::vector<Respawn> respawns;
     std::vector<Platform> platforms;
     std::vector<Collision> collisions;
+
+  private:
+    void drawBackground();
 };

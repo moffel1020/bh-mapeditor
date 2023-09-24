@@ -49,10 +49,7 @@ Map::Map() {
 }
 
 void Map::draw(const Camera2D& cam) {
-    DrawTexturePro(background.tex,
-                   Rectangle{0, 0, (float)background.tex.width, (float)background.tex.height},
-                   Rectangle{0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
-                   Vector2(0, 0), 0, WHITE);
+    drawBackground();
 
     BeginMode2D(cam);
 
@@ -103,4 +100,27 @@ void Map::draw(const Camera2D& cam) {
     }
 
     EndMode2D();
+}
+
+void Map::drawBackground() {
+    float sWidth = GetScreenWidth();
+    float sHeight = GetScreenHeight();
+
+    if (sHeight * background.ratio < sWidth) {
+        // if the image is smaller than the width of the screen, scale with the width and move it up
+        // to center it
+        float hwRatio = 1 / background.ratio;
+        float bY = -(sWidth - sHeight * background.ratio) / 2;
+        DrawTexturePro(background.tex,
+                       Rectangle{0, 0, (float)background.tex.width, (float)background.tex.height},
+                       Rectangle{0, bY, sWidth, sWidth * hwRatio}, Vector2(0, 0), 0, WHITE);
+        return;
+    }
+
+    // if image width is bigger than the screen, center it by moving it to the left
+    float bX = -(sHeight * background.ratio - sWidth) / 2;
+    DrawTexturePro(background.tex,
+                   Rectangle{0, 0, (float)background.tex.width, (float)background.tex.height},
+                   Rectangle{bX, 0, sHeight * background.ratio, sHeight}, Vector2(0, 0), 0, WHITE);
+    return;
 }
