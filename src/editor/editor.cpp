@@ -129,6 +129,13 @@ void Editor::gui() {
             ImGui::DragInt("bottom", &map->killBounds.bottom, 10.0f, 1, INT_MAX, "%d",
                            ImGuiSliderFlags_AlwaysClamp);
         }
+
+        if (ImGui::Button(map->thumbnail.getFilename().c_str())) {
+            map->background.setImage(selectImageFile());
+        }
+        ImGui::SameLine();
+        ImGui::Text("Thumbnail");
+        ImGui::Image(&map->thumbnail.tex.id, ImVec2(90 * map->thumbnail.ratio, 90));
         ImGui::End();
     }
 

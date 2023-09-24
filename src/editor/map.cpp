@@ -11,6 +11,8 @@ Map::Map() {
                       "\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Backgrou"
                       "nds\\BG_Steam."
                       "jpg");
+    thumbnail = ImageResource(
+        "D:\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\images\\thumbnails\\testmap.jpg");
 
     camBounds = CameraBounds{-1364, 278.15f, 4928, 2772};
     killBounds = KillBounds{700, 700, 800, 850};

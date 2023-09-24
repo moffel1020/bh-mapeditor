@@ -13,6 +13,7 @@ class Map {
     std::string name = "CustomMap";
     WeaponColor weaponColor;
     ImageResource background;
+    ImageResource thumbnail;
     CameraBounds camBounds;
     KillBounds killBounds;
 
