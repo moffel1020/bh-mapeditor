@@ -7,12 +7,12 @@ void showMapInfoWindow(Map* map, bool* open) {
     ImGui::Begin("Map Info", open);
     ImGui::InputTextWithHint("Map name", "Enter name", &map->name,
                              ImGuiInputTextFlags_CharsNoBlank);
-    if (ImGui::Button(map->background.getFilename().c_str())) {
-        map->background.setImage(selectImageFile());
+    if (ImGui::Button(std::string("file: " + map->background->getFilename()).c_str())) {
+        map->background->setImage(selectImageFile());
     }
     ImGui::SameLine();
     ImGui::Text("Background");
-    ImGui::Image(&map->background.tex.id, ImVec2(90 * map->background.ratio, 90));
+    ImGui::Image(&map->background->tex.id, ImVec2(90 * map->background->ratio, 90));
     ImGui::SeparatorText("Weapon spawn color");
     ImGui::ColorEdit3("inner", map->weaponColor.inner, ImGuiColorEditFlags_NoInputs);
     ImGui::ColorEdit3("outer", map->weaponColor.outer, ImGuiColorEditFlags_NoInputs);
@@ -37,11 +37,11 @@ void showMapInfoWindow(Map* map, bool* open) {
                        ImGuiSliderFlags_AlwaysClamp);
     }
 
-    if (ImGui::Button(map->thumbnail.getFilename().c_str())) {
-        map->background.setImage(selectImageFile());
+    if (ImGui::Button(("file: " + map->thumbnail->getFilename()).c_str())) {
+        map->thumbnail->setImage(selectImageFile());
     }
     ImGui::SameLine();
     ImGui::Text("Thumbnail");
-    ImGui::Image(&map->thumbnail.tex.id, ImVec2(90 * map->thumbnail.ratio, 90));
+    ImGui::Image(&map->thumbnail->tex.id, ImVec2(90 * map->thumbnail->ratio, 90));
     ImGui::End();
 }

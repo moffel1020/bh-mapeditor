@@ -2,6 +2,7 @@
 #include "mapdata.h"
 #include "raylib.h"
 #include <filesystem>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,8 +13,8 @@ class Map {
 
     std::string name = "CustomMap";
     WeaponColor weaponColor;
-    ImageResource background;
-    ImageResource thumbnail;
+    std::shared_ptr<ImageResource> background;
+    std::shared_ptr<ImageResource> thumbnail;
     CameraBounds camBounds;
     KillBounds killBounds;
 

@@ -9,6 +9,7 @@ class ImageResource {
     void setImage(const std::string& path);
     std::string getFilename() const { return path.filename().string(); }
     ImageResource() {}
+    ~ImageResource();
 
     std::filesystem::path path;
     Texture tex;
@@ -35,7 +36,7 @@ struct Platform {
     float y;
     float h;
     float w;
-    ImageResource img;
+    std::shared_ptr<ImageResource> img;
 };
 
 enum class CollisionType {

@@ -3,34 +3,35 @@
 #include "mapdata.h"
 #include "raylib.h"
 #include "rlgl.h"
+#include <memory>
 
 Map::Map() {
     // placeholder test map
-    background =
-        ImageResource("D:"
-                      "\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Backgrou"
-                      "nds\\BG_Steam."
-                      "jpg");
-    thumbnail = ImageResource(
+    background = std::make_shared<ImageResource>(
+        "D:\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Backgrounds\\BG_Steam."
+        "jpg");
+
+    thumbnail = std::make_shared<ImageResource>(
         "D:\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\images\\thumbnails\\testmap.jpg");
 
     camBounds = CameraBounds{-1364, 278.15f, 4928, 2772};
     killBounds = KillBounds{700, 700, 800, 850};
 
-    platforms.emplace_back(187, 1747, 930.77f, 938.45f,
-                           ImageResource("D:"
-                                         "\\games\\steamlibrary\\steamapps\\common\\Brawlhall"
-                                         "a\\mapArt\\Enigma\\Platform_"
-                                         "Steam1A."
-
-                                         "png"));
     platforms.emplace_back(
-        1091.5f, 1747, 930.77f, 938.45f,
-        ImageResource("D:"
-                      "\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Eni"
-                      "gma\\Platform_"
-                      "Steam1B."
-                      "png"));
+        187, 1747, 930.77f, 938.45f,
+        std::make_shared<ImageResource>("D:"
+                                        "\\games\\steamlibrary\\steamapps\\common\\Brawlhall"
+                                        "a\\mapArt\\Enigma\\Platform_"
+                                        "Steam1A."
+
+                                        "png"));
+    platforms.emplace_back(1091.5f, 1747, 930.77f, 938.45f,
+                           std::make_shared<ImageResource>(
+                               "D:"
+                               "\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Eni"
+                               "gma\\Platform_"
+                               "Steam1B."
+                               "png"));
 
     collisions.emplace_back(CollisionType::HARD, 200, 1850, 2000, 1850);
     collisions.emplace_back(CollisionType::HARD, 200, 2450, 200, 1850);
@@ -56,8 +57,8 @@ void Map::draw(const Camera2D& cam) {
     BeginMode2D(cam);
 
     for (auto pf : platforms) {
-        DrawTexturePro(pf.img.tex,
-                       Rectangle{0, 0, (float)pf.img.tex.width, (float)pf.img.tex.height},
+        DrawTexturePro(pf.img->tex,
+                       Rectangle{0, 0, (float)pf.img->tex.width, (float)pf.img->tex.height},
                        Rectangle{pf.x, pf.y, pf.w, pf.h}, Vector2(0, 0), 0, WHITE);
     }
 
@@ -108,21 +109,21 @@ void Map::drawBackground() {
     float sWidth = GetScreenWidth();
     float sHeight = GetScreenHeight();
 
-    if (sHeight * background.ratio < sWidth) {
+    if (sHeight * background->ratio < sWidth) {
         // if the image is smaller than the width of the screen, scale with the width and move it up
         // to center it
-        float hwRatio = 1 / background.ratio;
-        float bY = -(sWidth - sHeight * background.ratio) / 2;
-        DrawTexturePro(background.tex,
-                       Rectangle{0, 0, (float)background.tex.width, (float)background.tex.height},
+        float hwRatio = 1 / background->ratio;
+        float bY = -(sWidth - sHeight * background->ratio) / 2;
+        DrawTexturePro(background->tex,
+                       Rectangle{0, 0, (float)background->tex.width, (float)background->tex.height},
                        Rectangle{0, bY, sWidth, sWidth * hwRatio}, Vector2(0, 0), 0, WHITE);
         return;
     }
 
     // if image width is bigger than the screen, center it by moving it to the left
-    float bX = -(sHeight * background.ratio - sWidth) / 2;
-    DrawTexturePro(background.tex,
-                   Rectangle{0, 0, (float)background.tex.width, (float)background.tex.height},
-                   Rectangle{bX, 0, sHeight * background.ratio, sHeight}, Vector2(0, 0), 0, WHITE);
+    float bX = -(sHeight * background->ratio - sWidth) / 2;
+    DrawTexturePro(background->tex,
+                   Rectangle{0, 0, (float)background->tex.width, (float)background->tex.height},
+                   Rectangle{bX, 0, sHeight * background->ratio, sHeight}, Vector2(0, 0), 0, WHITE);
     return;
 }
