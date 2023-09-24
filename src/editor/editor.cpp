@@ -22,13 +22,13 @@ void Editor::start() {
     InitWindow(1280, 720, "map editor");
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
+    findBrawlDir();
     map = std::make_unique<Map>();
+    map->loadTestMap(brawlDir);
 
     rlImGuiSetup(true);
 
     cam.zoom = 1.0f;
-
-    findBrawlDir();
 }
 
 void Editor::run() {
@@ -88,12 +88,22 @@ void Editor::gui() {
         ImGui::EndMainMenuBar();
     }
 
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse) {
+        ImGui::OpenPopup("a popup");
+    }
+
+    if (ImGui::BeginPopup("a popup")) {
+        ImGui::Text("hello from popup");
+        ImGui::Button("yes");
+        ImGui::EndPopup();
+    }
+
     ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
     // clang-format off
     if (showDemo) ImGui::ShowDemoWindow(&showDemo);
     if (showMapInfo) showMapInfoWindow(map.get(), &showMapInfo);
-    if (showObjectView) showObjectViewWindow(map.get(), &showMapInfo);
+    if (showObjectView) showObjectViewWindow(map.get(), &showObjectView);
     // clang-format on
 
     rlImGuiEnd();

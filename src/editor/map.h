@@ -8,8 +8,8 @@
 
 class Map {
   public:
-    Map();
     void draw(const Camera2D& cam);
+    void loadTestMap(const std::string& brawlDir);
 
     std::string name = "CustomMap";
     WeaponColor weaponColor;

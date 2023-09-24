@@ -5,33 +5,22 @@
 #include "rlgl.h"
 #include <memory>
 
-Map::Map() {
+void Map::loadTestMap(const std::string& brawlDir) {
     // placeholder test map
-    background = std::make_shared<ImageResource>(
-        "D:\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Backgrounds\\BG_Steam."
-        "jpg");
+    background = std::make_shared<ImageResource>(brawlDir + "\\mapArt\\Backgrounds\\BG_Steam."
+                                                            "jpg");
 
-    thumbnail = std::make_shared<ImageResource>(
-        "D:\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\images\\thumbnails\\testmap.jpg");
+    thumbnail = std::make_shared<ImageResource>(brawlDir + "\\images\\thumbnails\\testmap.jpg");
 
     camBounds = CameraBounds{-1364, 278.15f, 4928, 2772};
     killBounds = KillBounds{700, 700, 800, 850};
 
     platforms.emplace_back(
         187, 1747, 930.77f, 938.45f,
-        std::make_shared<ImageResource>("D:"
-                                        "\\games\\steamlibrary\\steamapps\\common\\Brawlhall"
-                                        "a\\mapArt\\Enigma\\Platform_"
-                                        "Steam1A."
-
-                                        "png"));
-    platforms.emplace_back(1091.5f, 1747, 930.77f, 938.45f,
-                           std::make_shared<ImageResource>(
-                               "D:"
-                               "\\games\\steamlibrary\\steamapps\\common\\Brawlhalla\\mapArt\\Eni"
-                               "gma\\Platform_"
-                               "Steam1B."
-                               "png"));
+        std::make_shared<ImageResource>(brawlDir + "\\mapArt\\Enigma\\Platform_Steam1A.png"));
+    platforms.emplace_back(
+        1091.5f, 1747, 930.77f, 938.45f,
+        std::make_shared<ImageResource>(brawlDir + "\\mapArt\\Enigma\\Platform_Steam1B.png"));
 
     collisions.emplace_back(CollisionType::HARD, 200, 1850, 2000, 1850);
     collisions.emplace_back(CollisionType::HARD, 200, 2450, 200, 1850);
@@ -56,7 +45,7 @@ void Map::draw(const Camera2D& cam) {
 
     BeginMode2D(cam);
 
-    for (auto pf : platforms) {
+    for (auto& pf : platforms) {
         DrawTexturePro(pf.img->tex,
                        Rectangle{0, 0, (float)pf.img->tex.width, (float)pf.img->tex.height},
                        Rectangle{pf.x, pf.y, pf.w, pf.h}, Vector2(0, 0), 0, WHITE);
@@ -64,7 +53,7 @@ void Map::draw(const Camera2D& cam) {
 
     int opacity = 150;
     rlSetLineWidth(15 * cam.zoom);
-    for (auto collision : collisions) {
+    for (auto& collision : collisions) {
         auto col = ORANGE;
         col.a = opacity;
         if (collision.type == CollisionType::HARD) {
@@ -82,7 +71,7 @@ void Map::draw(const Camera2D& cam) {
                          camBounds.h + killBounds.top + killBounds.bottom};
     DrawRectangleLinesEx(kbounds, 15, LIGHTGRAY);
 
-    for (auto item : itemSpawns) {
+    for (auto& item : itemSpawns) {
         auto col = BLUE;
         col.a = opacity;
         if (item.init) {
@@ -92,7 +81,7 @@ void Map::draw(const Camera2D& cam) {
         DrawCircle(item.x, item.y, 50, col);
     }
 
-    for (auto respawn : respawns) {
+    for (auto& respawn : respawns) {
         auto col = GREEN;
         col.a = opacity;
         if (respawn.init) {
