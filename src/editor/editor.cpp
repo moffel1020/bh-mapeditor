@@ -244,7 +244,8 @@ bool Editor::isValidBrawlDir(const std::filesystem::path& dir) const {
 std::string Editor::selectImageFile() const {
     NFD::Init();
     nfdchar_t* out;
-    auto result = NFD::OpenDialog(out);
+    nfdfilteritem_t filter = {"Image", "png,jpg,jpeg"};
+    auto result = NFD::OpenDialog(out, &filter, 1);
     if (result == NFD_OKAY) {
         NFD::FreePath(out);
         return std::string(out);
