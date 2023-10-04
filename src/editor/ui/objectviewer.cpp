@@ -9,7 +9,10 @@ void showObjectViewWindow(Map* map, bool* open) {
         for (size_t i = 0; i < map->platforms.size(); i++) {
             if (ImGui::TreeNode((void*)&map->platforms[i], "platform %d", (int)i)) {
                 if (ImGui::Button(("file: " + map->platforms[i].img->getFilename()).c_str())) {
-                    map->platforms[i].img->setImage(selectImageFile());
+                    auto image = selectImageFile();
+                    if (image.has_value()) {
+                        map->platforms[i].img->setImage(image.value());
+                    }
                 }
                 ImGui::SameLine();
                 ImGui::Text("Image");

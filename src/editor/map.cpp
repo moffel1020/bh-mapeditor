@@ -7,20 +7,20 @@
 
 void Map::loadTestMap(const std::string& brawlDir) {
     // placeholder test map
-    background = std::make_shared<ImageResource>(brawlDir + "\\mapArt\\Backgrounds\\BG_Steam."
+    background = std::make_shared<ImageResource>(brawlDir + "/mapArt/Backgrounds/BG_Steam."
                                                             "jpg");
 
-    thumbnail = std::make_shared<ImageResource>(brawlDir + "\\images\\thumbnails\\testmap.jpg");
+    thumbnail = std::make_shared<ImageResource>(brawlDir + "/images/thumbnails/testmap.jpg");
 
     camBounds = CameraBounds{-1364, 278.15f, 4928, 2772};
     killBounds = KillBounds{700, 700, 800, 850};
 
     platforms.emplace_back(
         187, 1747, 930.77f, 938.45f,
-        std::make_shared<ImageResource>(brawlDir + "\\mapArt\\Enigma\\Platform_Steam1A.png"));
+        std::make_shared<ImageResource>(brawlDir + "/mapArt/Enigma/Platform_Steam1A.png"));
     platforms.emplace_back(
         1091.5f, 1747, 930.77f, 938.45f,
-        std::make_shared<ImageResource>(brawlDir + "\\mapArt\\Enigma\\Platform_Steam1B.png"));
+        std::make_shared<ImageResource>(brawlDir + "/mapArt/Enigma/Platform_Steam1B.png"));
 
     collisions.emplace_back(CollisionType::HARD, 200, 1850, 2000, 1850);
     collisions.emplace_back(CollisionType::HARD, 200, 2450, 200, 1850);

@@ -3,7 +3,7 @@
 #include "nfd.hpp"
 #include <string>
 
-std::string selectImageFile() {
+std::optional<std::string> selectImageFile() {
     NFD::Init();
     nfdchar_t* out;
     nfdfilteritem_t filter = {"Image", "png,jpg,jpeg"};
@@ -14,5 +14,5 @@ std::string selectImageFile() {
     }
 
     Logger::error("failed selecting image");
-    return std::string("");
+    return {};
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <string>
 
-std::string selectImageFile();
+std::optional<std::string> selectImageFile();

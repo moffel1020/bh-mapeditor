@@ -31,6 +31,12 @@ struct KillBounds {
     int bottom;
 };
 
+struct WeaponColor {
+    // rgb, 0 to 1
+    float inner[3];
+    float outer[3];
+};
+
 struct Platform {
     float x;
     float y;
@@ -64,10 +70,4 @@ struct ItemSpawn {
     float x;
     float y;
     bool init;
-};
-
-struct WeaponColor {
-    // rgb, 0 to 1
-    float inner[3];
-    float outer[3];
 };

@@ -88,15 +88,15 @@ void Editor::gui() {
         ImGui::EndMainMenuBar();
     }
 
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse) {
-        ImGui::OpenPopup("a popup");
-    }
+    // if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse) {
+    //     ImGui::OpenPopup("a popup");
+    // }
 
-    if (ImGui::BeginPopup("a popup")) {
-        ImGui::Text("hello from popup");
-        ImGui::Button("yes");
-        ImGui::EndPopup();
-    }
+    // if (ImGui::BeginPopup("a popup")) {
+    //     ImGui::Text("hello from popup");
+    //     ImGui::Button("yes");
+    //     ImGui::EndPopup();
+    // }
 
     ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 

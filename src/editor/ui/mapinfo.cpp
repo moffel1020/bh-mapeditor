@@ -8,7 +8,10 @@ void showMapInfoWindow(Map* map, bool* open) {
     ImGui::InputTextWithHint("Map name", "Enter name", &map->name,
                              ImGuiInputTextFlags_CharsNoBlank);
     if (ImGui::Button(std::string("file: " + map->background->getFilename()).c_str())) {
-        map->background->setImage(selectImageFile());
+        auto image = selectImageFile();
+        if (image.has_value()) {
+            map->background->setImage(image.value());
+        }
     }
     ImGui::SameLine();
     ImGui::Text("Background");
@@ -38,7 +41,10 @@ void showMapInfoWindow(Map* map, bool* open) {
     }
 
     if (ImGui::Button(("file: " + map->thumbnail->getFilename()).c_str())) {
-        map->thumbnail->setImage(selectImageFile());
+        auto image = selectImageFile();
+        if (image.has_value()) {
+            map->thumbnail->setImage(image.value());
+        }
     }
     ImGui::SameLine();
     ImGui::Text("Thumbnail");
