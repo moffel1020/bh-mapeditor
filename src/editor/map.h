@@ -10,6 +10,7 @@ class Map {
   public:
     void draw(const Camera2D& cam);
     void loadTestMap(const std::string& brawlDir);
+    void addObject(float x, float y, MapObject type);
 
     std::string name = "CustomMap";
     WeaponColor weaponColor;

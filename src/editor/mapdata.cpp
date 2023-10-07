@@ -13,10 +13,11 @@ void ImageResource::setImage(const std::string& path) {
     }
 
     Logger::info("Loading image resource " + path);
-    this->path = path;
-    if (tex.id) {
+    if (tex.id && std::filesystem::exists(this->path)) {
+        Logger::info("Unloading image resource " + this->path.string());
         UnloadTexture(tex);
     }
+    this->path = path;
     this->tex = LoadTexture(path.c_str());
     this->ratio = (float)tex.width / (float)tex.height;
 }

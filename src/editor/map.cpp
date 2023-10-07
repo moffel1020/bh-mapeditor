@@ -1,4 +1,5 @@
 #include "map.h"
+#include "editor.h"
 #include "logger.h"
 #include "mapdata.h"
 #include "raylib.h"
@@ -115,4 +116,24 @@ void Map::drawBackground() {
                    Rectangle{0, 0, (float)background->tex.width, (float)background->tex.height},
                    Rectangle{bX, 0, sHeight * background->ratio, sHeight}, Vector2(0, 0), 0, WHITE);
     return;
+}
+
+void Map::addObject(float x, float y, MapObject type) {
+    switch (type) {
+    case MapObject::RESPAWN:
+        respawns.emplace_back(x, y, false);
+        break;
+    case MapObject::ITEMSPAWN:
+        itemSpawns.emplace_back(x, y, false);
+        break;
+    case MapObject::COLLISION:
+        collisions.emplace_back(CollisionType::HARD, x, y, x + 50, y);
+        break;
+    case MapObject::PLATFORM:
+        platforms.emplace_back(
+            x, y, 200, 200,
+            std::make_shared<ImageResource>(Editor::get().getBrawlDir() +
+                                            "/images/thumbnails/CorruptFile.png"));
+        break;
+    }
 }

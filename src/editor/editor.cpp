@@ -17,6 +17,9 @@
 #include <string>
 #include <vector>
 
+Editor* Editor::instance = nullptr;
+Editor::Editor() { Editor::instance = this; }
+
 void Editor::start() {
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(1280, 720, "map editor");

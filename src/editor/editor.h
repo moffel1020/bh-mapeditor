@@ -4,14 +4,18 @@
 
 class Editor {
   public:
+    Editor();
     void start();
     void run();
     ~Editor();
+    static Editor& get() { return *instance; }
+    std::string getBrawlDir() { return brawlDir; }
 
   private:
     void gui();
     void findBrawlDir();
     bool isValidBrawlDir(const std::filesystem::path& dir) const;
+    static Editor* instance;
 
     std::string brawlDir;
     std::unique_ptr<Map> map;

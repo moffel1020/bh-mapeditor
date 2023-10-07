@@ -16,6 +16,13 @@ class ImageResource {
     float ratio = 1; // width / height
 };
 
+enum class MapObject {
+    PLATFORM,
+    COLLISION,
+    RESPAWN,
+    ITEMSPAWN
+};
+
 struct CameraBounds {
     float x;
     float y;
