@@ -23,8 +23,8 @@ void Map::loadTestMap(const std::string& brawlDir) {
         1091.5f, 1747, 930.77f, 938.45f,
         std::make_shared<ImageResource>(brawlDir + "/mapArt/Enigma/Platform_Steam1B.png"));
 
-    collisions.emplace_back(CollisionType::HARD, 200, 1850, 2000, 1850);
-    collisions.emplace_back(CollisionType::HARD, 200, 2450, 200, 1850);
+    collisions.emplace_back(CollisionType::Hard, 200, 1850, 2000, 1850);
+    collisions.emplace_back(CollisionType::Hard, 200, 2450, 200, 1850);
     itemSpawns.emplace_back(1086.45f, 1353.95f, true);
     itemSpawns.emplace_back(698.65f, 1570, false);
     itemSpawns.emplace_back(1117.6f, 1570, false);
@@ -57,7 +57,7 @@ void Map::draw(const Camera2D& cam) {
     for (auto& collision : collisions) {
         auto col = ORANGE;
         col.a = opacity;
-        if (collision.type == CollisionType::HARD) {
+        if (collision.type == CollisionType::Hard) {
             col = RED;
             col.a = opacity;
         }
@@ -120,16 +120,16 @@ void Map::drawBackground() {
 
 void Map::addObject(float x, float y, MapObject type) {
     switch (type) {
-    case MapObject::RESPAWN:
+    case MapObject::Respawn:
         respawns.emplace_back(x, y, false);
         break;
-    case MapObject::ITEMSPAWN:
+    case MapObject::ItemSpawn:
         itemSpawns.emplace_back(x, y, false);
         break;
-    case MapObject::COLLISION:
-        collisions.emplace_back(CollisionType::HARD, x, y, x + 50, y);
+    case MapObject::Collision:
+        collisions.emplace_back(CollisionType::Hard, x, y, x + 50, y);
         break;
-    case MapObject::PLATFORM:
+    case MapObject::Platform:
         platforms.emplace_back(
             x, y, 200, 200,
             std::make_shared<ImageResource>(Editor::get().getBrawlDir() +

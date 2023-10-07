@@ -17,10 +17,10 @@ class ImageResource {
 };
 
 enum class MapObject {
-    PLATFORM,
-    COLLISION,
-    RESPAWN,
-    ITEMSPAWN
+    Platform,
+    Collision,
+    Respawn,
+    ItemSpawn
 };
 
 struct CameraBounds {
@@ -53,10 +53,10 @@ struct Platform {
 };
 
 enum class CollisionType {
-    HARD,
-    SOFT,
-    DYNAMIC,
-    NOSLIDE
+    Hard,
+    Soft,
+    Dynamic,
+    NoSlide
 };
 
 struct Collision {
