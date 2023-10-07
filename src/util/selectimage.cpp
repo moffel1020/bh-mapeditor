@@ -9,10 +9,13 @@ std::optional<std::string> selectImageFile() {
     nfdfilteritem_t filter = {"Image", "png,jpg,jpeg"};
     auto result = NFD::OpenDialog(out, &filter, 1);
     if (result == NFD_OKAY) {
+        std::string res = out;
         NFD::FreePath(out);
-        return std::string(out);
+        NFD::Quit();
+        return res;
     }
 
     Logger::error("failed selecting image");
+    NFD::Quit();
     return {};
 }
