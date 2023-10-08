@@ -4,6 +4,7 @@
 #include "map.h"
 #include "mapinfo.h"
 #include "nfd.hpp"
+#include "objecttypes.h"
 #include "objectviewer.h"
 #include "raylib.h"
 #include "raymath.h"
@@ -64,6 +65,7 @@ void Editor::run() {
 
         BeginDrawing();
         ClearBackground(BLACK);
+
         map->draw(cam);
         gui();
 
@@ -91,15 +93,18 @@ void Editor::gui() {
         ImGui::EndMainMenuBar();
     }
 
-    // if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse) {
-    //     ImGui::OpenPopup("a popup");
-    // }
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse) {
+        ImGui::OpenPopup("a popup");
+    }
 
-    // if (ImGui::BeginPopup("a popup")) {
-    //     ImGui::Text("hello from popup");
-    //     ImGui::Button("yes");
-    //     ImGui::EndPopup();
-    // }
+    if (ImGui::BeginPopup("a popup")) {
+        ImGui::Text("hello from popup");
+        if (ImGui::Button("yes")) {
+            Vector2 coords = GetScreenToWorld2D(GetMousePosition(), cam);
+            map->addObject<Respawn>(coords.x, coords.y);
+        }
+        ImGui::EndPopup();
+    }
 
     ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
@@ -139,7 +144,7 @@ void Editor::findBrawlDir() {
 
 bool Editor::isValidBrawlDir(const std::filesystem::path& dir) const {
     const std::string requiredFiles[] = {"Dynamic.swz", "BrawlhallaAir.swf"};
-    for (auto file : requiredFiles) {
+    for (auto& file : requiredFiles) {
         if (!std::filesystem::exists(dir.string() + "/" + file)) {
             Logger::error("Could not find " + file + " in " + dir.string());
             return false;

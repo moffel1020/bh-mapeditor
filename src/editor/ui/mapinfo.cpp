@@ -1,6 +1,7 @@
 #include "mapinfo.h"
 #include "imgui.h"
 #include "imgui_stdlib.h"
+#include "raylib.h"
 #include "selectimage.h"
 
 void showMapInfoWindow(Map* map, bool* open) {

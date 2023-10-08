@@ -9,11 +9,10 @@ ImageResource::ImageResource(const std::string& path) { setImage(path); }
 void ImageResource::setImage(const std::string& path) {
     if (!std::filesystem::exists(path)) {
         Logger::error("could not load " + path + " it doesnt exist");
-        return;
     }
 
     Logger::info("Loading image resource " + path);
-    if (tex.id && std::filesystem::exists(this->path)) {
+    if (IsTextureReady(tex)) {
         Logger::info("Unloading image resource " + this->path.string());
         UnloadTexture(tex);
     }
@@ -23,7 +22,8 @@ void ImageResource::setImage(const std::string& path) {
 }
 
 ImageResource::~ImageResource() {
-    if (tex.id) {
+    if (IsTextureReady(tex)) {
+        Logger::info("Unloading image resource " + this->path.string());
         UnloadTexture(tex);
     }
 }

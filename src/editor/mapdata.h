@@ -8,19 +8,11 @@ class ImageResource {
     ImageResource(const std::string& path);
     void setImage(const std::string& path);
     std::string getFilename() const { return path.filename().string(); }
-    ImageResource() {}
     ~ImageResource();
 
     std::filesystem::path path;
-    Texture tex;
+    Texture tex = {};
     float ratio = 1; // width / height
-};
-
-enum class MapObject {
-    Platform,
-    Collision,
-    Respawn,
-    ItemSpawn
 };
 
 struct CameraBounds {
@@ -42,39 +34,4 @@ struct WeaponColor {
     // rgb, 0 to 1
     float inner[3];
     float outer[3];
-};
-
-struct Platform {
-    float x;
-    float y;
-    float h;
-    float w;
-    std::shared_ptr<ImageResource> img;
-};
-
-enum class CollisionType {
-    Hard,
-    Soft,
-    Dynamic,
-    NoSlide
-};
-
-struct Collision {
-    CollisionType type;
-    float x1;
-    float y1;
-    float x2;
-    float y2;
-};
-
-struct Respawn {
-    float x;
-    float y;
-    bool init;
-};
-
-struct ItemSpawn {
-    float x;
-    float y;
-    bool init;
 };

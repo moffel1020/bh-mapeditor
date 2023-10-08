@@ -19,5 +19,5 @@ class Editor {
 
     std::string brawlDir;
     std::unique_ptr<Map> map;
-    Camera2D cam;
+    Camera2D cam = {};
 };
