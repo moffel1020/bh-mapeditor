@@ -4,12 +4,12 @@
 #include "map.h"
 #include "mapinfo.h"
 #include "nfd.hpp"
-#include "objecttypes.h"
 #include "objectviewer.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "rlImGui.h"
 #include "rlgl.h"
+#include "spawnpopup.h"
 #include <climits>
 #include <filesystem>
 #include <iostream>
@@ -85,7 +85,7 @@ void Editor::gui() {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("View")) {
-            ImGui::MenuItem("Object viewer", nullptr, &showObjectView);
+            ImGui::MenuItem("Object Viewer", nullptr, &showObjectView);
             ImGui::MenuItem("Map Info", nullptr, &showMapInfo);
             ImGui::MenuItem("Gui Demo", nullptr, &showDemo);
             ImGui::EndMenu();
@@ -94,16 +94,7 @@ void Editor::gui() {
     }
 
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse) {
-        ImGui::OpenPopup("a popup");
-    }
-
-    if (ImGui::BeginPopup("a popup")) {
-        ImGui::Text("hello from popup");
-        if (ImGui::Button("yes")) {
-            Vector2 coords = GetScreenToWorld2D(GetMousePosition(), cam);
-            map->addObject<Respawn>(coords.x, coords.y);
-        }
-        ImGui::EndPopup();
+        ImGui::OpenPopup("Item Select");
     }
 
     ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
@@ -112,6 +103,7 @@ void Editor::gui() {
     if (showDemo) ImGui::ShowDemoWindow(&showDemo);
     if (showMapInfo) showMapInfoWindow(map.get(), &showMapInfo);
     if (showObjectView) showObjectViewWindow(map.get(), &showObjectView);
+    showObjectSpawnPopup(map.get());
     // clang-format on
 
     rlImGuiEnd();

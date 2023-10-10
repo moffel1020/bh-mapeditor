@@ -10,6 +10,7 @@ class Editor {
     ~Editor();
     static Editor& get() { return *instance; }
     std::string getBrawlDir() { return brawlDir; }
+    const Camera2D& getCam() { return cam; }
 
   private:
     void gui();
