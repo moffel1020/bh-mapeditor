@@ -13,15 +13,19 @@ void showObjectSpawnPopup(Map* map) {
 
         if (ImGui::Button("Respawn")) {
             map->addObject<Respawn>(coords.x, coords.y);
+            ImGui::CloseCurrentPopup();
         }
         if (ImGui::Button("Item Spawn")) {
             map->addObject<ItemSpawn>(coords.x, coords.y);
+            ImGui::CloseCurrentPopup();
         }
         if (ImGui::Button("Platform")) {
             map->addObject<Platform>(coords.x, coords.y);
+            ImGui::CloseCurrentPopup();
         }
         if (ImGui::Button("Collision")) {
             map->addObject<Collision>(coords.x, coords.y);
+            ImGui::CloseCurrentPopup();
         }
 
         ImGui::EndPopup();

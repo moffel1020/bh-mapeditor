@@ -15,7 +15,7 @@ class Map {
     bool removeObject(MapObject* object);
     bool addObject(MapObjectType type, float x = 0, float y = 0);
     template <typename T, typename... Args> void addObject(Args&&... args) {
-        mapObjects.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+        mapObjects.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
     }
 
     std::string name = "CustomMap";
@@ -25,7 +25,7 @@ class Map {
     CameraBounds camBounds;
     KillBounds killBounds;
 
-    std::vector<std::unique_ptr<MapObject>> mapObjects;
+    std::vector<std::shared_ptr<MapObject>> mapObjects;
 
   private:
     void drawBackground();

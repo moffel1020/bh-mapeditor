@@ -4,6 +4,7 @@
 #include "map.h"
 #include "mapinfo.h"
 #include "nfd.hpp"
+#include "objectinfo.h"
 #include "objectviewer.h"
 #include "raylib.h"
 #include "raymath.h"
@@ -78,6 +79,7 @@ void Editor::gui() {
 
     static bool showMapInfo = true;
     static bool showObjectView = true;
+    static bool showObjectInfo = true;
     static bool showDemo = false;
 
     if (ImGui::BeginMainMenuBar()) {
@@ -103,6 +105,7 @@ void Editor::gui() {
     if (showDemo) ImGui::ShowDemoWindow(&showDemo);
     if (showMapInfo) showMapInfoWindow(map.get(), &showMapInfo);
     if (showObjectView) showObjectViewWindow(map.get(), &showObjectView);
+    if (showObjectInfo) showObjectInfoWindow(selectedObject, map.get(), &showObjectInfo);
     showObjectSpawnPopup(map.get());
     // clang-format on
 

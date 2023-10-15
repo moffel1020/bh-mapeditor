@@ -8,7 +8,7 @@ class Respawn : public MapObject {
     Respawn(float x, float y, bool init = false);
     void draw() const override;
     MAPOBJECT_TYPE(Respawn)
-  private:
+
     float x;
     float y;
     bool init;
@@ -19,7 +19,7 @@ class ItemSpawn : public MapObject {
     ItemSpawn(float x, float y, bool init = false);
     void draw() const override;
     MAPOBJECT_TYPE(ItemSpawn)
-  private:
+
     float x;
     float y;
     bool init;
@@ -38,7 +38,7 @@ class Collision : public MapObject {
     Collision(float x, float y, CollisionType type = CollisionType::Hard);
     void draw() const override;
     MAPOBJECT_TYPE(Collision)
-  private:
+
     float x1;
     float y1;
     float x2;
@@ -52,7 +52,7 @@ class Platform : public MapObject {
     Platform(float x, float y, float w = 300, float h = 100, const std::string& path = "");
     void draw() const override;
     MAPOBJECT_TYPE(Platform)
-  private:
+
     float x;
     float y;
     float w;

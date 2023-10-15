@@ -69,16 +69,16 @@ void Map::draw(const Camera2D& cam) {
 bool Map::addObject(MapObjectType type, float x, float y) {
     switch (type) {
     case MapObjectType::Platform:
-        mapObjects.emplace_back(std::make_unique<Platform>(x, y));
+        mapObjects.emplace_back(std::make_shared<Platform>(x, y));
         break;
     case MapObjectType::Respawn:
-        mapObjects.emplace_back(std::make_unique<Respawn>(x, y));
+        mapObjects.emplace_back(std::make_shared<Respawn>(x, y));
         break;
     case MapObjectType::Collision:
-        mapObjects.emplace_back(std::make_unique<Collision>(x, y));
+        mapObjects.emplace_back(std::make_shared<Collision>(x, y));
         break;
     case MapObjectType::ItemSpawn:
-        mapObjects.emplace_back(std::make_unique<ItemSpawn>(x, y));
+        mapObjects.emplace_back(std::make_shared<ItemSpawn>(x, y));
         break;
     default:
         Logger::error("tried to add unknown object type");
@@ -91,7 +91,7 @@ bool Map::addObject(MapObjectType type, float x, float y) {
 bool Map::removeObject(MapObject* object) {
     const auto it =
         std::find_if(mapObjects.begin(), mapObjects.end(),
-                     [&](std::unique_ptr<MapObject>& mo) { return mo.get() == object; });
+                     [&](std::shared_ptr<MapObject>& mo) { return mo.get() == object; });
 
     if (it == mapObjects.end()) {
         return false;

@@ -10,8 +10,8 @@ enum class MapObjectType {
 
 #define MAPOBJECT_TYPE(type)                                                                       \
     static MapObjectType getStaticType() { return MapObjectType::type; }                           \
-    virtual MapObjectType getType() const override { return getStaticType(); }                     \
-    virtual const char* getTypeName() const override { return #type; }
+    MapObjectType getType() const override { return getStaticType(); }                             \
+    const char* getTypeName() const override { return #type; }
 
 class MapObject {
   public:
