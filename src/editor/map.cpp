@@ -1,6 +1,6 @@
 #include "map.h"
+#include "imageresource.h"
 #include "logger.h"
-#include "mapdata.h"
 #include "mapobject.h"
 #include "objecttypes.h"
 #include "raylib.h"

@@ -1,6 +1,6 @@
 #include "objecttypes.h"
 #include "editor.h"
-#include "mapdata.h"
+#include "imageresource.h"
 #include "raylib.h"
 #include <memory>
 

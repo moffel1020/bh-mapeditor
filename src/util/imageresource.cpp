@@ -1,8 +1,5 @@
-#include "mapdata.h"
+#include "imageresource.h"
 #include "logger.h"
-#include "raylib.h"
-#include <filesystem>
-#include <string>
 
 ImageResource::ImageResource(const std::string& path) { setImage(path); }
 

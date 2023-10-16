@@ -1,5 +1,5 @@
 #pragma once
-#include "mapdata.h"
+#include "imageresource.h"
 #include "mapobject.h"
 #include <memory>
 

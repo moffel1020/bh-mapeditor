@@ -1,12 +1,33 @@
 #pragma once
+#include "imageresource.h"
 #include "logger.h"
-#include "mapdata.h"
 #include "mapobject.h"
 #include "raylib.h"
 #include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
+
+struct CameraBounds {
+    float x;
+    float y;
+    float w;
+    float h;
+};
+
+// relative to camerabounds
+struct KillBounds {
+    int left;
+    int right;
+    int top;
+    int bottom;
+};
+
+struct WeaponColor {
+    // rgb, 0 to 1
+    float inner[3];
+    float outer[3];
+};
 
 class Map {
   public:
