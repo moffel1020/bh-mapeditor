@@ -88,6 +88,7 @@ void Editor::gui() {
         }
         if (ImGui::BeginMenu("View")) {
             ImGui::MenuItem("Object Viewer", nullptr, &showObjectView);
+            ImGui::MenuItem("Object Info", nullptr, &showObjectInfo);
             ImGui::MenuItem("Map Info", nullptr, &showMapInfo);
             ImGui::MenuItem("Gui Demo", nullptr, &showDemo);
             ImGui::EndMenu();

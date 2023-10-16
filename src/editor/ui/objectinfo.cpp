@@ -13,10 +13,10 @@ void showObjectInfoWindow(std::weak_ptr<MapObject> mapObject, Map* map, bool* op
 
     std::shared_ptr<MapObject> object = mapObject.lock();
 
-    ImGui::Begin(object->getTypeName(), open);
+    ImGui::Begin("Object Info", open);
+    ImGui::Text("type: %s", object->getTypeName());
 
     switch (object->getType()) {
-
     case MapObjectType::Platform: {
         Platform* platform = static_cast<Platform*>(object.get());
         if (ImGui::Button(("file: " + platform->img->getFilename()).c_str())) {
@@ -79,5 +79,6 @@ void showObjectInfoWindow(std::weak_ptr<MapObject> mapObject, Map* map, bool* op
     default:
         break;
     }
+
     ImGui::End();
 }

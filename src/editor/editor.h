@@ -13,6 +13,8 @@ class Editor {
     static Editor& get() { return *instance; }
     const std::string& getBrawlDir() const { return brawlDir; }
     const Camera2D& getCam() const { return cam; }
+    std::weak_ptr<MapObject> getSelectedobject() const { return selectedObject; };
+    void setSelectedObject(std::weak_ptr<MapObject> object) { selectedObject = object; }
 
   private:
     void gui();
