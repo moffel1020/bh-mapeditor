@@ -802,6 +802,7 @@ typedef enum {
     PIXELFORMAT_UNCOMPRESSED_R32,           // 32 bpp (1 channel - float)
     PIXELFORMAT_UNCOMPRESSED_R32G32B32,     // 32*3 bpp (3 channels - float)
     PIXELFORMAT_UNCOMPRESSED_R32G32B32A32,  // 32*4 bpp (4 channels - float)
+    PIXELFORMAT_UNCOMPRESSED_R32I,          // 32 bpp (1 channel - int)
     PIXELFORMAT_COMPRESSED_DXT1_RGB,        // 4 bpp (no alpha)
     PIXELFORMAT_COMPRESSED_DXT1_RGBA,       // 4 bpp (1 bit alpha)
     PIXELFORMAT_COMPRESSED_DXT3_RGBA,       // 8 bpp
