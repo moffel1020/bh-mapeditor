@@ -5,8 +5,8 @@
 #include "mapinfo.h"
 #include "mapobject.h"
 #include "nfd.hpp"
-#include "objectinfo.h"
-#include "objectviewer.h"
+#include "objectlist.h"
+#include "objectproperties.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "rlImGui.h"
@@ -115,8 +115,8 @@ void Editor::gui() {
     rlImGuiBegin();
 
     static bool showMapInfo = true;
-    static bool showObjectView = true;
-    static bool showObjectInfo = true;
+    static bool showObjectList = true;
+    static bool showObjectProperties = true;
     static bool showDemo = false;
 
     if (ImGui::BeginMainMenuBar()) {
@@ -124,8 +124,8 @@ void Editor::gui() {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("View")) {
-            ImGui::MenuItem("Object Viewer", nullptr, &showObjectView);
-            ImGui::MenuItem("Object Info", nullptr, &showObjectInfo);
+            ImGui::MenuItem("Object List", nullptr, &showObjectList);
+            ImGui::MenuItem("Object Properties", nullptr, &showObjectProperties);
             ImGui::MenuItem("Map Info", nullptr, &showMapInfo);
             ImGui::MenuItem("Gui Demo", nullptr, &showDemo);
             ImGui::EndMenu();
@@ -143,8 +143,8 @@ void Editor::gui() {
     // clang-format off
     if (showDemo) ImGui::ShowDemoWindow(&showDemo);
     if (showMapInfo) showMapInfoWindow(map.get(), &showMapInfo);
-    if (showObjectView) showObjectViewWindow(map.get(), &showObjectView);
-    if (showObjectInfo) showObjectInfoWindow(selectedObject, map.get(), &showObjectInfo);
+    if (showObjectList) showObjectListWindow(map.get(), &showObjectList);
+    if (showObjectProperties) showObjectPropertiesWindow(selectedObject, map.get(), &showObjectProperties);
     showObjectSpawnPopup(map.get());
     // clang-format on
 

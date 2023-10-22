@@ -1,4 +1,4 @@
-#include "objectinfo.h"
+#include "objectproperties.h"
 #include "editor.h"
 #include "imgui.h"
 #include "map.h"
@@ -6,14 +6,14 @@
 #include "objecttypes.h"
 #include "selectimage.h"
 
-void showObjectInfoWindow(std::weak_ptr<MapObject> mapObject, Map* map, bool* open) {
+void showObjectPropertiesWindow(std::weak_ptr<MapObject> mapObject, Map* map, bool* open) {
     if (mapObject.expired()) {
         return;
     }
 
     std::shared_ptr<MapObject> object = mapObject.lock();
 
-    ImGui::Begin("Object Info", open);
+    ImGui::Begin("Properties", open);
     ImGui::Text("type: %s", object->getTypeName());
 
     switch (object->getType()) {
