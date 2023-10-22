@@ -3,6 +3,7 @@
 #include "logger.h"
 #include "map.h"
 #include "mapinfo.h"
+#include "mapobject.h"
 #include "nfd.hpp"
 #include "objectinfo.h"
 #include "objectviewer.h"
@@ -11,13 +12,37 @@
 #include "rlImGui.h"
 #include "rlgl.h"
 #include "spawnpopup.h"
-#include <climits>
 #include <filesystem>
-#include <iostream>
-#include <math.h>
 #include <memory>
 #include <string>
 #include <vector>
+
+namespace MousePickShader {
+const static char* vert = "#version 330\n"
+                          "in vec3 vertexPosition;\n"
+                          "in vec2 vertexTexCoord;\n"
+                          "in vec4 vertexColor;\n"
+                          "out vec2 fragTexCoord;\n"
+                          "out vec4 fragColor;\n"
+                          "uniform mat4 mvp;\n"
+                          "void main()\n"
+                          "{\n"
+                          "    fragTexCoord = vertexTexCoord;\n"
+                          "    fragColor = vertexColor;\n"
+                          "    gl_Position = mvp*vec4(vertexPosition, 1.0);\n"
+                          "}\n";
+
+const static char* frag = "#version 330\n"
+                          "in vec2 fragTexCoord;\n"
+                          "in vec4 fragColor;\n"
+                          "uniform int id;\n"
+                          "uniform sampler2D texture0;\n"
+                          "layout(location=0) out int finalColor;\n"
+                          "void main()\n"
+                          "{\n"
+                          "    finalColor = id;\n"
+                          "}\n";
+}
 
 Editor* Editor::instance = nullptr;
 Editor::Editor() { Editor::instance = this; }
@@ -32,6 +57,9 @@ void Editor::start() {
     map->loadTestMap(brawlDir);
 
     rlImGuiSetup(true);
+
+    loadMousePickingFramebuffer();
+    objectIdFBO.shader = LoadShaderFromMemory(MousePickShader::vert, MousePickShader::frag);
 
     cam.zoom = 1.0f;
 }
@@ -62,6 +90,15 @@ void Editor::run() {
             if (cam.zoom < zoomIncrement) {
                 cam.zoom = zoomIncrement;
             }
+        }
+
+        if (IsWindowResized()) {
+            loadMousePickingFramebuffer();
+        }
+
+        // select objects by clicking on them
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse) {
+            setSelectedObject(getObjectAtCoords(GetMouseX(), GetMouseY()));
         }
 
         BeginDrawing();
@@ -96,7 +133,8 @@ void Editor::gui() {
         ImGui::EndMainMenuBar();
     }
 
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse) {
+    if ((IsMouseButtonReleased(MOUSE_BUTTON_MIDDLE) || IsKeyReleased(KEY_SPACE)) &&
+        !ImGui::GetIO().WantCaptureMouse) {
         ImGui::OpenPopup("Item Select");
     }
 
@@ -114,6 +152,8 @@ void Editor::gui() {
 }
 
 Editor::~Editor() {
+    UnloadRenderTexture(objectIdFBO.framebuffer);
+    UnloadShader(objectIdFBO.shader);
     rlImGuiShutdown();
     CloseWindow();
 }
@@ -148,4 +188,71 @@ bool Editor::isValidBrawlDir(const std::filesystem::path& dir) const {
     }
 
     return true;
+}
+
+void Editor::loadMousePickingFramebuffer() {
+    if (!IsShaderReady(objectIdFBO.shader)) {
+        objectIdFBO.shader = LoadShaderFromMemory(MousePickShader::vert, MousePickShader::frag);
+    }
+
+    if (objectIdFBO.framebuffer.id) {
+        UnloadRenderTexture(objectIdFBO.framebuffer);
+    }
+
+    int w = GetScreenWidth();
+    int h = GetScreenHeight();
+    objectIdFBO.framebuffer.id = rlLoadFramebuffer(w, h);
+
+    if (objectIdFBO.framebuffer.id > 0) {
+        rlEnableFramebuffer(objectIdFBO.framebuffer.id);
+        objectIdFBO.framebuffer.texture.id =
+            rlLoadTexture(NULL, w, h, PIXELFORMAT_UNCOMPRESSED_R32I, 1);
+        objectIdFBO.framebuffer.texture.width = w;
+        objectIdFBO.framebuffer.texture.height = h;
+        objectIdFBO.framebuffer.texture.format = PIXELFORMAT_UNCOMPRESSED_R32I;
+        objectIdFBO.framebuffer.texture.mipmaps = 1;
+
+        rlFramebufferAttach(objectIdFBO.framebuffer.id, objectIdFBO.framebuffer.texture.id,
+                            RL_ATTACHMENT_COLOR_CHANNEL0, RL_ATTACHMENT_TEXTURE2D, 0);
+        if (rlFramebufferComplete(objectIdFBO.framebuffer.id)) {
+            Logger::info("Succesfully created mouse picking framebuffer");
+        }
+        rlDisableFramebuffer();
+    } else {
+        Logger::warn("Could not create mouse picking framebuffer");
+    }
+}
+
+std::weak_ptr<MapObject> Editor::getObjectAtCoords(int screenX, int screenY) {
+    Logger::disableRlLog = true;
+    BeginTextureMode(objectIdFBO.framebuffer);
+    ClearBackground(WHITE);
+    BeginShaderMode(objectIdFBO.shader);
+
+    BeginMode2D(cam);
+    rlSetLineWidth(15 * cam.zoom);
+    // this is terrible but actually setting shader attribs is annoying in raylib
+    for (size_t i = 0; i < map->mapObjects.size(); i++) {
+        map->mapObjects[i]->draw();
+        SetShaderValue(objectIdFBO.shader, GetShaderLocation(objectIdFBO.shader, "id"), &i,
+                       RL_SHADER_UNIFORM_INT);
+        rlDrawRenderBatchActive();
+    }
+
+    EndMode2D();
+    EndShaderMode();
+    EndTextureMode();
+
+    auto img = LoadImageFromTexture(objectIdFBO.framebuffer.texture);
+
+    int32_t data = ((int32_t*)img.data)[screenX + (img.height - screenY) * img.width];
+    UnloadImage(img);
+
+    std::weak_ptr<MapObject> object;
+    if (data >= 0 && data <= (int32_t)map->mapObjects.size()) {
+        object = map->mapObjects[data];
+    }
+
+    Logger::disableRlLog = false;
+    return object;
 }

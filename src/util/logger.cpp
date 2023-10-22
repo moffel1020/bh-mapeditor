@@ -9,6 +9,10 @@ void Logger::error(std::string text) { std::cout << "[ERROR] : " << text << std:
 void Logger::warn(std::string text) { std::cout << "[WARN] : " << text << std::endl; }
 
 void Logger::rlLog(int msgType, const char* text, va_list args) {
+    if (disableRlLog) {
+        return;
+    }
+
     switch (msgType) {
     case LOG_INFO:
         std::cout << "[INFO] : ";

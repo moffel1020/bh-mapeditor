@@ -20,6 +20,8 @@ class Editor {
     void gui();
     void findBrawlDir();
     bool isValidBrawlDir(const std::filesystem::path& dir) const;
+    void loadMousePickingFramebuffer();
+    std::weak_ptr<MapObject> getObjectAtCoords(int screenX, int screenY);
 
     std::string brawlDir;
     std::unique_ptr<Map> map;
@@ -28,4 +30,9 @@ class Editor {
     std::weak_ptr<MapObject> selectedObject;
 
     static Editor* instance;
+
+    struct {
+        RenderTexture2D framebuffer;
+        Shader shader;
+    } objectIdFBO;
 };
