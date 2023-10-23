@@ -30,22 +30,6 @@ void ItemSpawn::draw() const {
     DrawCircle(x, y, 50, col);
 }
 
-Collision::Collision(float x1, float y1, float x2, float y2, CollisionType type)
-    : x1(x1), y1(y1), x2(x2), y2(y2), collisionType(type) {}
-
-Collision::Collision(float x, float y, CollisionType type)
-    : x1(x), y1(y), x2(x + 300), y2(y), collisionType(type) {}
-
-void Collision::draw() const {
-    auto col = ORANGE;
-    col.a = opacity;
-    if (collisionType == CollisionType::Hard) {
-        col = RED;
-        col.a = opacity;
-    }
-    DrawLine(x1, y1, x2, y2, col);
-}
-
 Platform::Platform(float x, float y, float w, float h, const std::string& path)
     : x(x), y(y), w(w), h(h) {
 
@@ -65,4 +49,48 @@ void Platform::draw() const {
 
     DrawTexturePro(img->tex, Rectangle{0, 0, (float)img->tex.width, (float)img->tex.height},
                    Rectangle{x, y, w, h}, Vector2(0, 0), 0, WHITE);
+}
+
+SoftCollision::SoftCollision(float x1, float y1, float x2, float y2)
+    : x1(x1), y1(y1), x2(x2), y2(y2) {}
+
+SoftCollision::SoftCollision(float x, float y) : x1(x), y1(y), x2(x + 300), y2(y) {}
+
+void SoftCollision::draw() const {
+    auto col = ORANGE;
+    col.a = opacity;
+    DrawLine(x1, y1, x2, y2, col);
+}
+
+HardCollision::HardCollision(float x, float y) {
+    points.emplace_back(x - 150, y - 150);
+    points.emplace_back(x - 150, y + 150);
+    points.emplace_back(x + 150, y + 150);
+    points.emplace_back(x + 150, y - 150);
+}
+
+void HardCollision::draw() const {
+    auto col = RED;
+    col.a = opacity;
+    for (size_t i = 0; i < points.size(); i++) {
+        if (i == points.size() - 1) {
+            DrawLineV(points[i], points[0], col);
+            break;
+        }
+        DrawLineV(points[i], points[i + 1], col);
+    }
+}
+
+void HardCollision::addPoint() {
+    Vector2 coords{
+        .x = (points.front().x + points.back().x) / 2,
+        .y = (points.front().y + points.back().y) / 2 + 20,
+    };
+    points.emplace_back(coords);
+}
+
+void HardCollision::removePoint() {
+    if (points.size() > 3) {
+        points.erase(points.end());
+    }
 }

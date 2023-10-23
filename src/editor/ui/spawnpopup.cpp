@@ -23,8 +23,12 @@ void showObjectSpawnPopup(Map* map) {
             map->addObject<Platform>(coords.x, coords.y);
             ImGui::CloseCurrentPopup();
         }
-        if (ImGui::Button("Collision")) {
-            map->addObject<Collision>(coords.x, coords.y);
+        if (ImGui::Button("Soft Collision")) {
+            map->addObject<SoftCollision>(coords.x, coords.y);
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("Hard Collision")) {
+            map->addObject<HardCollision>(coords.x, coords.y);
             ImGui::CloseCurrentPopup();
         }
 

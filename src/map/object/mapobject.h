@@ -5,7 +5,8 @@ enum class MapObjectType {
     Platform,
     Respawn,
     ItemSpawn,
-    Collision,
+    HardCollision,
+    SoftCollision,
 };
 
 #define MAPOBJECT_TYPE(type)                                                                       \

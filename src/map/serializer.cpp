@@ -1,10 +1,10 @@
 #include "serializer.h"
+#include "mapobject.h"
 #include "objecttypes.h"
 #include "tinyxml2.h"
 
+// create xml string for dynamic.swz
 std::string MapSerializer::createLevelXml(std::shared_ptr<Map> map) {
-    // create xml file for dynamic.swz
-
     tinyxml2::XMLPrinter p(0, false);
     p.OpenElement("LevelDesc");
     p.PushAttribute("AssetDir", "Custom");
@@ -72,35 +72,50 @@ std::string MapSerializer::createLevelXml(std::shared_ptr<Map> map) {
             p.CloseElement();
             break;
         }
-        case MapObjectType::Collision: {
-            auto col = static_cast<Collision*>(mo.get());
-            if (col->collisionType == CollisionType::Hard) {
-                p.OpenElement("HardCollision");
-                if (col->x1 == col->x2) {
-                    p.PushAttribute("X", col->x1);
-                } else {
-                    p.PushAttribute("X1", col->x1);
-                    p.PushAttribute("X2", col->x2);
-                }
-
-                if (col->y1 == col->y2) {
-                    p.PushAttribute("Y", col->y1);
-                } else {
-                    p.PushAttribute("Y1", col->y1);
-                    p.PushAttribute("Y2", col->y2);
-                }
-                p.CloseElement();
-            } else { // TODO: add dynamic collisions when they are implemented
-                p.OpenElement("SoftCollision");
+        case MapObjectType::SoftCollision: {
+            auto col = static_cast<SoftCollision*>(mo.get());
+            p.OpenElement("SoftCollision");
+            if (col->x1 == col->x2) {
+                p.PushAttribute("X", col->x1);
+            } else {
                 p.PushAttribute("X1", col->x1);
                 p.PushAttribute("X2", col->x2);
+            }
+
+            if (col->y1 == col->y2) {
+                p.PushAttribute("Y", col->y1);
+            } else {
                 p.PushAttribute("Y1", col->y1);
                 p.PushAttribute("Y2", col->y2);
+            }
+            p.CloseElement();
+            break;
+        }
+        case MapObjectType::HardCollision: {
+            auto col = static_cast<HardCollision*>(mo.get());
+            for (size_t i = 0; i < col->points.size(); i++) {
+                const auto& point = col->points[i];
+                const auto& nextPoint =
+                    i == col->points.size() - 1 ? col->points[0] : col->points[i + 1];
+
+                p.OpenElement("HardCollision");
+                if (point.x == nextPoint.x) {
+                    p.PushAttribute("X", point.x);
+                } else {
+                    p.PushAttribute("X1", point.x);
+                    p.PushAttribute("X2", nextPoint.x);
+                }
+
+                if (point.y == nextPoint.y) {
+                    p.PushAttribute("Y", point.y);
+                } else {
+                    p.PushAttribute("Y1", point.y);
+                    p.PushAttribute("Y2", nextPoint.y);
+                }
                 p.CloseElement();
             }
             break;
         }
-
         default:
             Logger::warn("tried to serialize unknown mapobject type");
             break;

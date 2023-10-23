@@ -63,10 +63,8 @@ void showObjectPropertiesWindow(std::weak_ptr<MapObject> mapObject, Map* map, bo
         }
         break;
     }
-    case MapObjectType::Collision: {
-        Collision* collision = static_cast<Collision*>(object.get());
-        const char* colTypes[] = {"Hard", "Soft"}; // bad but it works for now
-        ImGui::Combo("type", (int*)(&collision->collisionType), colTypes, 2);
+    case MapObjectType::SoftCollision: {
+        SoftCollision* collision = static_cast<SoftCollision*>(object.get());
         ImGui::DragFloat("x1", &collision->x1, 5.0f);
         ImGui::DragFloat("y1", &collision->y1, 5.0f);
         ImGui::DragFloat("x2", &collision->x2, 5.0f);
@@ -75,6 +73,26 @@ void showObjectPropertiesWindow(std::weak_ptr<MapObject> mapObject, Map* map, bo
             map->removeObject(collision);
         }
         break;
+    }
+    case MapObjectType::HardCollision: {
+        HardCollision* collision = static_cast<HardCollision*>(object.get());
+        for (size_t i = 0; i < collision->points.size(); i++) {
+            ImGui::Text("point");
+            ImGui::DragFloat(("x##" + std::to_string(i)).c_str(), &collision->points[i].x);
+            ImGui::DragFloat(("y##" + std::to_string(i)).c_str(), &collision->points[i].y);
+        }
+
+        if (ImGui::Button("+")) {
+            collision->addPoint();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("-")) {
+            collision->removePoint();
+        }
+
+        if (ImGui::Button("Delete")) {
+            map->removeObject(collision);
+        }
     }
     default:
         break;

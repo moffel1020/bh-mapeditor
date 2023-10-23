@@ -1,7 +1,9 @@
 #pragma once
 #include "imageresource.h"
 #include "mapobject.h"
+#include "raylib.h"
 #include <memory>
+#include <vector>
 
 class Respawn : public MapObject {
   public:
@@ -25,27 +27,6 @@ class ItemSpawn : public MapObject {
     bool init;
 };
 
-enum class CollisionType {
-    Hard,
-    Soft,
-    Dynamic,
-    NoSlide
-};
-
-class Collision : public MapObject {
-  public:
-    Collision(float x1, float y1, float x2, float y2, CollisionType type = CollisionType::Hard);
-    Collision(float x, float y, CollisionType type = CollisionType::Hard);
-    void draw() const override;
-    MAPOBJECT_TYPE(Collision)
-
-    float x1;
-    float y1;
-    float x2;
-    float y2;
-    CollisionType collisionType;
-};
-
 class Platform : public MapObject {
   public:
     Platform() = delete;
@@ -58,4 +39,28 @@ class Platform : public MapObject {
     float w;
     float h;
     std::unique_ptr<ImageResource> img;
+};
+
+class HardCollision : public MapObject {
+  public:
+    HardCollision(float x, float y);
+    void addPoint();
+    void removePoint();
+    void draw() const override;
+    MAPOBJECT_TYPE(HardCollision)
+
+    std::vector<Vector2> points;
+};
+
+class SoftCollision : public MapObject {
+  public:
+    SoftCollision(float x1, float y1, float x2, float y2);
+    SoftCollision(float x, float y);
+    void draw() const override;
+    MAPOBJECT_TYPE(SoftCollision)
+
+    float x1;
+    float y1;
+    float x2;
+    float y2;
 };
