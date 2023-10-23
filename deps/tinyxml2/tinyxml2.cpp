@@ -2931,6 +2931,13 @@ void XMLPrinter::PushUnknown( const char* value )
     Putc( '>' );
 }
 
+void XMLPrinter::PushRaw( const char* text )
+{
+    // PrepareForNewNode( true );
+
+    Write( text );
+}
+
 
 bool XMLPrinter::VisitEnter( const XMLDocument& doc )
 {

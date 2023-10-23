@@ -11,8 +11,10 @@
 #include "raymath.h"
 #include "rlImGui.h"
 #include "rlgl.h"
+#include "serializer.h"
 #include "spawnpopup.h"
 #include <filesystem>
+#include <fstream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -53,7 +55,7 @@ void Editor::start() {
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     findBrawlDir();
-    map = std::make_unique<Map>();
+    map = std::make_shared<Map>();
     map->loadTestMap(brawlDir);
 
     rlImGuiSetup(true);
@@ -121,6 +123,11 @@ void Editor::gui() {
 
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Save as xml")) {
+                std::ofstream file("text.xml", std::ios::binary);
+                file << MapSerializer::createLevelXml(map);
+                file.close();
+            }
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("View")) {

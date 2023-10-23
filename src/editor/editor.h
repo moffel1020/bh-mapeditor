@@ -24,7 +24,7 @@ class Editor {
     std::weak_ptr<MapObject> getObjectAtCoords(int screenX, int screenY);
 
     std::string brawlDir;
-    std::unique_ptr<Map> map;
+    std::shared_ptr<Map> map;
     Camera2D cam = {};
 
     std::weak_ptr<MapObject> selectedObject;

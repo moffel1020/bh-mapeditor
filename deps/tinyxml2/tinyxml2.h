@@ -2280,6 +2280,8 @@ public:
     /// Add a text node from a double.
     void PushText( double value );
 
+    void PushRaw(const char* text);
+
     /// Add a comment
     void PushComment( const char* comment );
 
