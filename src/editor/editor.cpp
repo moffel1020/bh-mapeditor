@@ -95,11 +95,15 @@ void Editor::run() {
         }
 
         if (IsWindowResized()) {
-            loadMousePickingFramebuffer();
+            shouldResizeFramebuffer = true;
         }
 
         // select objects by clicking on them
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse) {
+            if (shouldResizeFramebuffer) {
+                loadMousePickingFramebuffer();
+                shouldResizeFramebuffer = false;
+            }
             setSelectedObject(getObjectAtCoords(GetMouseX(), GetMouseY()));
         }
 

@@ -35,4 +35,6 @@ class Editor {
         RenderTexture2D framebuffer;
         Shader shader;
     } objectIdFBO;
+
+    bool shouldResizeFramebuffer = false;
 };
