@@ -2282,6 +2282,8 @@ public:
 
     void PushRaw(const char* text);
 
+    void SetShortCloseMode(bool b) { _shortCloseMode = b; }
+
     /// Add a comment
     void PushComment( const char* comment );
 
@@ -2357,6 +2359,7 @@ private:
     int _textDepth;
     bool _processEntities;
 	bool _compactMode;
+    bool _shortCloseMode = true;
 
     enum {
         ENTITY_RANGE = 64,
