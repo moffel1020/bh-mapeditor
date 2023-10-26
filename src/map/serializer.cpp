@@ -1,13 +1,57 @@
 #include "serializer.h"
+#include "map.h"
 #include "mapobject.h"
 #include "objecttypes.h"
+#include "swz.h"
 #include "tinyxml2.h"
+#include <filesystem>
+#include <map>
+#include <memory>
+#include <string>
+
+std::string colToHexString(float* color) {
+    const uint16_t r = color[0] * 255;
+    const uint16_t g = color[1] * 255;
+    const uint16_t b = color[2] * 255;
+    char hexcol[16] = {};
+    snprintf(hexcol, sizeof(hexcol), "%02X%02X%02X", r, g, b);
+
+    return "0x" + std::string(hexcol);
+}
+
+MapSerializer::MapSerializer(std::shared_ptr<Map> map) : map(map) {}
+
+void MapSerializer::serialize(const std::string& brawlDir, bool moveToBrawlDir) {
+    uint32_t key = 644158000;
+    Swz dynamic(key, brawlDir + "/Dynamic.swz");
+    Swz game(key, brawlDir + "/Game.swz");
+    Swz init(key, brawlDir + "/Init.swz");
+
+    addToPlaylists(game.getFiles());
+    addLevelEntry(init.getFiles());
+    addLevelXml(dynamic.getFiles());
+
+    if (moveToBrawlDir) {
+        dynamic.encryptFiles(brawlDir + "/Dynamic.swz");
+        game.encryptFiles(brawlDir + "/Game.swz");
+        init.encryptFiles(brawlDir + "/Init.swz");
+        moveImages(brawlDir);
+    } else {
+        dynamic.dumpToDisk("dump/dynamic");
+        game.dumpToDisk("dump/game");
+        init.dumpToDisk("dump/init");
+
+        dynamic.encryptFiles("encrypt/Dynamic.swz");
+        game.encryptFiles("encrypt/Game.swz");
+        init.encryptFiles("encrypt/Init.swz");
+    }
+}
 
 // create xml string for dynamic.swz
-std::string MapSerializer::createLevelXml(std::shared_ptr<Map> map) {
+std::string MapSerializer::createLevelXml() {
     tinyxml2::XMLPrinter p(0, false);
     p.OpenElement("LevelDesc");
-    p.PushAttribute("AssetDir", "Custom");
+    p.PushAttribute("AssetDir", map->name.c_str());
     p.PushAttribute("LevelName", map->name.c_str());
 
     p.OpenElement("CameraBounds");
@@ -145,4 +189,108 @@ std::string MapSerializer::createLevelXml(std::shared_ptr<Map> map) {
     p.PushRaw(str);
     p.CloseElement();
     return std::string(p.CStr());
+}
+
+void MapSerializer::addLevelXml(std::map<std::string, std::string>& files) {
+    files[map->name + ".xml"] = createLevelXml();
+}
+
+void MapSerializer::addToPlaylists(std::map<std::string, std::string>& files) {
+    tinyxml2::XMLDocument doc;
+    std::string file = files["LevelSetTypes.xml"];
+    if (doc.Parse(file.c_str()) != tinyxml2::XML_SUCCESS) {
+        Logger::error("could not parse LevelSetTypes.xml file");
+        return;
+    }
+
+    auto root = doc.FirstChildElement("LevelSetTypes");
+    for (auto* e = root->FirstChildElement("LevelSetType"); e != nullptr;
+         e = e->NextSiblingElement("LevelSetType")) {
+
+        if (std::string(e->Attribute("LevelSetName")) == std::string("Auto", 4)) {
+            continue;
+        }
+
+        auto lt = e->FirstChildElement("LevelTypes");
+        std::string text = lt->GetText();
+        if (text.find(map->name) == text.npos) {
+            lt->SetText((map->name + "," + text).c_str());
+        }
+    }
+
+    tinyxml2::XMLPrinter printer;
+    doc.Print(&printer);
+    files["LevelSetTypes.xml"] = printer.CStr();
+}
+
+void MapSerializer::addLevelEntry(std::map<std::string, std::string>& files) {
+    tinyxml2::XMLDocument doc;
+    auto file = files["LevelTypes.xml"];
+    if (doc.Parse(file.c_str()) != tinyxml2::XML_SUCCESS) {
+        Logger::error("could not parse LevelTypes.xml file");
+        return;
+    }
+
+    auto root = doc.FirstChildElement("LevelTypes");
+
+    auto last = root->LastChildElement("LevelType");
+    int highestId = last->FirstChildElement("LevelID")->IntText();
+    auto newElem = root->InsertNewChildElement("LevelType");
+    newElem->SetAttribute("LevelName", map->name.c_str());
+    newElem->SetAttribute("DevOnly", "false");
+    newElem->SetAttribute("TestLevel", "false");
+    newElem->InsertNewChildElement("DisplayName")->InsertNewText(map->name.c_str());
+    newElem->InsertNewChildElement("LevelID")->InsertNewText(std::to_string(highestId + 1).c_str());
+    newElem->InsertNewChildElement("FileName")->InsertNewText("Level_Ruins.swf");
+    newElem->InsertNewChildElement("AssetName")->InsertNewText("a_Level_SmallEnigma");
+    newElem->InsertNewChildElement("CrateColorA")
+        ->InsertNewText(colToHexString(map->weaponColor.outer).c_str());
+    newElem->InsertNewChildElement("CrateColorB")
+        ->InsertNewText(colToHexString(map->weaponColor.inner).c_str());
+    newElem->InsertNewChildElement("LeftKill")
+        ->InsertNewText(std::to_string(map->killBounds.left).c_str());
+    newElem->InsertNewChildElement("RightKill")
+        ->InsertNewText(std::to_string(map->killBounds.right).c_str());
+    newElem->InsertNewChildElement("TopKill")->InsertNewText(
+        std::to_string(map->killBounds.top).c_str());
+    newElem->InsertNewChildElement("BottomKill")
+        ->InsertNewText(std::to_string(map->killBounds.bottom).c_str());
+    newElem->InsertNewChildElement("BGMusic")->InsertNewText("Level06Theme");
+    newElem->InsertNewChildElement("ThumbnailPNGFile")
+        ->InsertNewText(map->thumbnail->getFilename().c_str());
+    newElem->InsertNewChildElement("BotTint")->InsertNewText("0");
+    newElem->InsertNewChildElement("BotOffset")->InsertNewText("0xEDBEB0");
+    newElem->InsertNewChildElement("BotFraction")->InsertNewText("0.55");
+    newElem->InsertNewChildElement("ColorExclusionList")
+        ->InsertNewText("StPaddy"); // this color sucks balls
+
+    tinyxml2::XMLPrinter printer;
+    printer.SetShortCloseMode(false); // brawlhalla doesnt like this sometimes
+    doc.Print(&printer);
+    files["LevelTypes.xml"] = printer.CStr();
+}
+
+void copyFile(std::filesystem::path src, std::filesystem::path dst) {
+    // c++ gets mad if the paths are the same
+    if (!std::filesystem::equivalent(src, dst)) {
+        std::filesystem::copy(src, dst, std::filesystem::copy_options::overwrite_existing);
+    }
+}
+
+void MapSerializer::moveImages(const std::string& brawlDir) {
+    copyFile(map->background->path,
+             brawlDir + "/mapArt/Backgrounds/" + map->background->getFilename());
+    copyFile(map->thumbnail->path,
+             brawlDir + "/images/thumbnails/" + map->thumbnail->getFilename());
+
+    std::filesystem::create_directories(brawlDir + "/mapArt/" + map->name);
+    for (const auto& mo : map->mapObjects) {
+        if (mo->getType() != MapObjectType::Platform) {
+            continue;
+        }
+
+        auto plat = static_cast<Platform*>(mo.get());
+        copyFile(plat->img->path,
+                 brawlDir + "/mapArt/" + map->name + "/" + plat->img->getFilename());
+    }
 }

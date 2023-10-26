@@ -15,7 +15,7 @@ class Swz {
 
     uint32_t getKey() { return key; }
     uint32_t getSeed() { return seed; }
-    const std::map<std::string, std::string>& getFiles() { return files; }
+    std::map<std::string, std::string>& getFiles() { return files; }
 
   private:
     std::vector<std::string> decrypt(std::string path);

@@ -127,10 +127,8 @@ void Editor::gui() {
 
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Save as xml")) {
-                std::ofstream file("text.xml", std::ios::binary);
-                file << MapSerializer::createLevelXml(map);
-                file.close();
+            if (ImGui::MenuItem("Export to game")) {
+                MapSerializer(map).serialize(brawlDir, true);
             }
             ImGui::EndMenu();
         }
