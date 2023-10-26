@@ -3,21 +3,24 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <string>
 #include <vector>
 
 class Swz {
   public:
-    explicit Swz(uint32_t key);
-    std::vector<std::string> decrypt(std::string path);
-    std::vector<uint8_t> encrypt(std::vector<std::string>& stringEntries, uint32_t seed = 0);
+    Swz(uint32_t key, const std::filesystem::path& swzFile);
+    void dumpToDisk(const std::filesystem::path& directory);
+    void encryptFiles(const std::filesystem::path& dest);
 
-    void writeFiles(const std::vector<std::string>& files, std::filesystem::path folder);
-
-    void writeSwz(const std::vector<uint8_t>& bytes, const std::filesystem::path filePath);
-
-    uint32_t getKey() { return m_Key; }
+    uint32_t getKey() { return key; }
+    uint32_t getSeed() { return seed; }
+    const std::map<std::string, std::string>& getFiles() { return files; }
 
   private:
+    std::vector<std::string> decrypt(std::string path);
+    std::vector<uint8_t> encrypt(uint32_t seed);
+
     std::string readStringEntry(std::ifstream& input, Well512& rand);
     uint32_t readUint32BE(std::ifstream& input);
     uint32_t rotateRight(uint32_t v, int bits);
@@ -27,5 +30,8 @@ class Swz {
 
     std::string generateFileName(const std::string& data);
 
-    uint32_t m_Key;
+    uint32_t seed;
+    uint32_t key;
+    std::string path;
+    std::map<std::string, std::string> files;
 };

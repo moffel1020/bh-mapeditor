@@ -2,11 +2,11 @@
 #include <vector>
 #include <zlib.h>
 
-std::vector<uint8_t> Swz::encrypt(std::vector<std::string>& stringEntries, uint32_t seed) {
-    Well512 rand(seed ^ m_Key);
+std::vector<uint8_t> Swz::encrypt(uint32_t seed) {
+    Well512 rand(seed ^ key);
 
     uint32_t hash = 0x2DF4A1CDu;
-    int hash_rounds = m_Key % 0x1F + 5;
+    int hash_rounds = key % 0x1F + 5;
 
     for (int i = 0; i < hash_rounds; i++) {
         hash ^= rand.nextUint();
@@ -16,8 +16,8 @@ std::vector<uint8_t> Swz::encrypt(std::vector<std::string>& stringEntries, uint3
     writeUint32BE(buffer, hash);
     writeUint32BE(buffer, seed);
 
-    for (std::string str : stringEntries) {
-        writeStringEntry(str, rand, buffer);
+    for (auto& str : files) {
+        writeStringEntry(str.second, rand, buffer);
     }
 
     return buffer;
@@ -43,6 +43,7 @@ void Swz::writeStringEntry(std::string& input, Well512& rand, std::vector<uint8_
 
     if (status != Z_OK) {
         std::cout << "compression failed with status: " << status << std::endl;
+        delete[] compressedInput;
         return;
     }
 

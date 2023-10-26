@@ -9,12 +9,12 @@ std::vector<std::string> Swz::decrypt(std::string path) {
         std::cout << "could not open swz file: " << path << std::endl;
     }
     uint32_t checksum = readUint32BE(input);
-    uint32_t seed = readUint32BE(input);
+    seed = readUint32BE(input);
 
-    auto rand = Well512(seed ^ m_Key);
+    auto rand = Well512(seed ^ key);
 
     uint32_t hash = 0x2DF4A1CDu;
-    uint32_t hash_rounds = m_Key % 0x1F + 5;
+    uint32_t hash_rounds = key % 0x1F + 5;
 
     for (uint32_t i = 0; i < hash_rounds; i++) {
         hash ^= rand.nextUint();
