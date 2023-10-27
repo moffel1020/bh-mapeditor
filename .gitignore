@@ -58,4 +58,6 @@ build/*
 .DS_Store
 *.swp
 
+.clangd
+
 !deps/raylib/build.zig
