@@ -1,7 +1,7 @@
 #include "swz.h"
+#include <miniz.h>
 #include <stdint.h>
 #include <string>
-#include <zlib.h>
 
 std::vector<std::string> Swz::decrypt(std::string path) {
     std::ifstream input(path, std::ios::binary);
@@ -60,7 +60,7 @@ std::string Swz::readStringEntry(std::ifstream& input, Well512& rand) {
         std::cout << "hash not equal to checksum 2" << std::endl;
     }
 
-    uint8_t out[decompressedSize];
+    uint8_t* out = new uint8_t[decompressedSize];
 
     uLong outSize = decompressedSize;
     int a = uncompress((Bytef*)out, &outSize, (Bytef*)buffer, (uLong)compressedSize);
@@ -70,7 +70,9 @@ std::string Swz::readStringEntry(std::ifstream& input, Well512& rand) {
     }
 
     delete[] buffer;
-    return std::string((const char*)out, decompressedSize);
+    std::string res((const char*)out, decompressedSize);
+    delete[] out;
+    return res;
 }
 
 uint32_t Swz::rotateRight(uint32_t v, int bits) { return (v >> bits) | (v << (32 - bits)); }

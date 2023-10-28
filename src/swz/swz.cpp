@@ -6,13 +6,13 @@
 #include <string>
 #include <vector>
 
-Swz::Swz(uint32_t key, const std::filesystem::path& swzFile) : key(key), path(swzFile) {
+Swz::Swz(uint32_t key, const std::filesystem::path& swzFile) : key(key), path(swzFile.string()) {
     if (!std::filesystem::exists(swzFile)) {
-        std::cout << "file " << swzFile.c_str() << " does not exist" << std::endl;
+        std::cout << "file " << swzFile.string() << " does not exist" << std::endl;
         return;
     }
 
-    auto contents = decrypt(swzFile);
+    auto contents = decrypt(swzFile.string());
     for (const auto& c : contents) {
         files[generateFileName(c)] = c;
     }

@@ -48,7 +48,7 @@ void Platform::draw() const {
     }
 
     DrawTexturePro(img->tex, Rectangle{0, 0, (float)img->tex.width, (float)img->tex.height},
-                   Rectangle{x, y, w, h}, Vector2(0, 0), 0, WHITE);
+                   Rectangle{x, y, w, h}, Vector2{0, 0}, 0, WHITE);
 }
 
 SoftCollision::SoftCollision(float x1, float y1, float x2, float y2)

@@ -116,7 +116,7 @@ void Map::drawBackground() {
         float bY = -(sWidth - sHeight * background->ratio) / 2;
         DrawTexturePro(background->tex,
                        Rectangle{0, 0, (float)background->tex.width, (float)background->tex.height},
-                       Rectangle{0, bY, sWidth, sWidth * hwRatio}, Vector2(0, 0), 0, WHITE);
+                       Rectangle{0, bY, sWidth, sWidth * hwRatio}, Vector2{0, 0}, 0, WHITE);
         return;
     }
 
@@ -124,6 +124,6 @@ void Map::drawBackground() {
     float bX = -(sHeight * background->ratio - sWidth) / 2;
     DrawTexturePro(background->tex,
                    Rectangle{0, 0, (float)background->tex.width, (float)background->tex.height},
-                   Rectangle{bX, 0, sHeight * background->ratio, sHeight}, Vector2(0, 0), 0, WHITE);
+                   Rectangle{bX, 0, sHeight * background->ratio, sHeight}, Vector2{0, 0}, 0, WHITE);
     return;
 }

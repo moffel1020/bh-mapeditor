@@ -1,6 +1,6 @@
 #include "swz.h"
+#include <miniz.h>
 #include <vector>
-#include <zlib.h>
 
 std::vector<uint8_t> Swz::encrypt(uint32_t seed) {
     Well512 rand(seed ^ key);
