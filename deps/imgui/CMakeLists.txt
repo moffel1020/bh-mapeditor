@@ -10,4 +10,7 @@ add_library(imgui STATIC
     misc/cpp/imgui_stdlib.cpp
 )
 
-target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(imgui PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/misc/cpp
+)
