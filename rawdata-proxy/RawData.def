@@ -1,0 +1,3 @@
+EXPORTS
+ExtFinalizer=RawData_orig.ExtFinalizer @1    
+ExtInitializer=RawData_orig.ExtInitializer @2
