@@ -1,3 +1,4 @@
+#include <stdint.h>
 #define WIN32_LEAN_AND_MEAN
 #include "FlashRuntimeExtensions.h"
 #include <fstream>
@@ -19,12 +20,12 @@ static SwzType activeSwz = SwzType::Unknown;
 static bool shouldLoadCustomMaps = false;
 
 // pointers to original functions from RawData.dll
-FREInitializer ExtInitializer_orig;
-FREFinalizer ExtFinalizer_orig;
-FREContextInitializer contextInitializer_orig;
-FREFunction init_orig;
-FREFunction setData_orig;
-FREFunction getData_orig;
+FREInitializer ExtInitializer_orig; // calls contextInitializer
+FREFinalizer ExtFinalizer_orig; // extension finalizer, not used
+FREContextInitializer contextInitializer_orig; // sets function pointers of native extension
+FREFunction init_orig; // sets the decryption key
+FREFunction setData_orig; // loads byte array of swz file contents
+FREFunction getData_orig; // returns decrypted UTF8 data of one file inside an swz
 
 std::string createFileName(const std::string& data) {
     std::string fileName;
@@ -95,7 +96,22 @@ FREObject setData(FREContext ctx, void* functionData, uint32_t argc, FREObject a
     return setData_orig(ctx, functionData, argc, argv);
 }
 
+/*
+*/
+
 FREObject getData(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
+    // check if used as log or not
+    std::cout << "argc: " << argc << std::endl;
+    if (argc > 0) {
+        std::cout << "trying to log" << std::endl;
+        const uint8_t* text;
+        uint32_t length = 0;
+        if (FREGetObjectAsUTF8(argv[0], &length, &text) == FRE_OK && length > 0) {
+            std::cout << "[AS]: " << text << std::endl;
+        } 
+        return nullptr;
+    }
+
     FREObject data = getData_orig(ctx, functionData, argc, argv);
     const char* cData;
     uint32_t length = 0;
@@ -147,14 +163,13 @@ void contextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx,
     std::cout << "Context initializer called" << std::endl;
     contextInitializer_orig(extData, ctxType, ctx, numFunctionsToSet, functionsToSet);
 
-    FRENamedFunction* funcs =
-        (FRENamedFunction*)malloc(sizeof(FRENamedFunction) * *numFunctionsToSet);
-    memcpy(funcs, *functionsToSet, sizeof(FRENamedFunction) * 3);
-    init_orig = funcs[0].function;
-    setData_orig = funcs[1].function;
-    getData_orig = funcs[2].function;
+    init_orig = (*functionsToSet)[0].function;
+    setData_orig = (*functionsToSet)[1].function;
+    getData_orig = (*functionsToSet)[2].function;
 
     if (shouldLoadCustomMaps) {
+        FRENamedFunction* funcs = (FRENamedFunction*)malloc(sizeof(FRENamedFunction) * (*numFunctionsToSet));
+        memcpy(funcs, *functionsToSet, sizeof(FRENamedFunction) * (*numFunctionsToSet));
         funcs[0].function = init;
         funcs[1].function = setData;
         funcs[2].function = getData;
